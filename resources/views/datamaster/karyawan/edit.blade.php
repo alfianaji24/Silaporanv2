@@ -66,7 +66,6 @@
          <option value="T" {{ $karyawan->status_karyawan == 'T' ? 'selected' : '' }}>Tetap</option>
       </select>
    </div>
-
    <div class="form-group mb-3">
       <label for="exampleFormControlInput1" style="font-weight: 600" class="form-label">Status Aktif Karyawan</label>
       <select name="status_aktif_karyawan" id="status_aktif_karyawan" class="form-select">
