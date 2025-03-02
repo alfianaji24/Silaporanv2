@@ -102,7 +102,7 @@
                                             </td>
                                             <td>
                                                 @if (!empty($d->foto))
-                                                    @if (Storage::disk('public')->exists('/karyawan/' . $d->foto))
+                                                    @if (Storage::disk('public/uploads')->exists('/karyawan/' . $d->foto))
                                                         <div class="avatar avatar-xs me-2">
                                                             <img src="{{ getfotoKaryawan($d->foto) }}" alt="" class="rounded-circle">
                                                         </div>
