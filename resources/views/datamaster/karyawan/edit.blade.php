@@ -75,7 +75,7 @@
          <option value="0" {{ $karyawan->status_aktif_karyawan === '0' ? 'selected' : '' }}>Non Aktif</option>
       </select>
    </div>
-   <x-input-file name="foto" label="Foto" />
+   <x-input-file name="foto" label="Foto" type="file" accept="image/*" enctype="multipart/form-data" />
    <div class="form-group">
       <button class="btn btn-primary w-100" type="submit">
          <ion-icon name="send-outline" class="me-1"></ion-icon>

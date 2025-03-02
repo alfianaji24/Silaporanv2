@@ -88,7 +88,7 @@ class KaryawanController extends Controller
             $data_foto = [];
             if ($request->hasfile('foto')) {
                 $foto_name =  $request->nik . "." . $request->file('foto')->getClientOriginalExtension();
-                $destination_foto_path = "/public/karyawan";
+                $destination_foto_path = "/public/uploads/karyawan";
                 $foto = $foto_name;
                 $data_foto = [
                     'foto' => $foto
