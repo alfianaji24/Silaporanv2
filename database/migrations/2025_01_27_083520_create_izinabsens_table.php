@@ -16,7 +16,7 @@ return new class extends Migration
             $table->date('tanggal');
             $table->date('dari');
             $table->date('sampai');
-            $table->char('nik', 20);
+            $table->char('nik', 9);
             $table->string('keterangan');
             $table->string('keterangan_hrd')->nullable();
             $table->char('status', 1);

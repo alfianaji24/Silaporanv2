@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('presensi_izincuti', function (Blueprint $table) {
             $table->char('kode_izin_cuti', 12)->primary();
-            $table->char('nik', 20);
+            $table->char('nik', 9);
             $table->date('tanggal');
             $table->date('dari');
             $table->date('sampai');

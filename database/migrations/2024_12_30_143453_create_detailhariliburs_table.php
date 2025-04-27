@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('hari_libur_detail', function (Blueprint $table) {
             $table->char('kode_libur', 7);
-            $table->char('nik', 20);
+            $table->char('nik', 9);
             $table->foreign('kode_libur')->references('kode_libur')->on('hari_libur')->cascadeOnUpdate()->cascadeOnUpdate();
             $table->foreign('nik')->references('nik')->on('karyawan')->restrictOnDelete()->cascadeOnUpdate();
             $table->timestamps();

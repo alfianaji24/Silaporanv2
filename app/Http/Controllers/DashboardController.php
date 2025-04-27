@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Charts\JeniskelaminkaryawanChart;
+use App\Charts\PendidikankaryawanChart;
+use App\Charts\StatusKaryawanChart;
 use App\Models\Karyawan;
 use App\Models\Presensi;
 use App\Models\User;
@@ -12,7 +15,7 @@ use Jenssegers\Agent\Agent;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(StatusKaryawanChart $chart, JeniskelaminkaryawanChart $jkchart, PendidikankaryawanChart $pddchart)
     {
         $agent = new Agent();
         $user = User::where('id', auth()->user()->id)->first();
@@ -25,8 +28,28 @@ class DashboardController extends Controller
                 ->join('cabang', 'karyawan.kode_cabang', '=', 'cabang.kode_cabang')
                 ->first();
 
-            $data['presensi'] = Presensi::where('nik', $userkaryawan->nik)->where('tanggal', $hari_ini)->first();
-            $data['datapresensi'] = Presensi::join('presensi_jamkerja', 'presensi.kode_jam_kerja', '=', 'presensi_jamkerja.kode_jam_kerja')->where('nik', $userkaryawan->nik)
+            $data['presensi'] = Presensi::where('presensi.nik', $userkaryawan->nik)->where('presensi.tanggal', $hari_ini)->first();
+            $data['datapresensi'] = Presensi::join('presensi_jamkerja', 'presensi.kode_jam_kerja', '=', 'presensi_jamkerja.kode_jam_kerja')
+                ->where('presensi.nik', $userkaryawan->nik)
+                ->leftJoin('presensi_izinabsen_approve', 'presensi.id', '=', 'presensi_izinabsen_approve.id_presensi')
+                ->leftJoin('presensi_izinabsen', 'presensi_izinabsen_approve.kode_izin', '=', 'presensi_izinabsen.kode_izin')
+
+                ->leftJoin('presensi_izinsakit_approve', 'presensi.id', '=', 'presensi_izinsakit_approve.id_presensi')
+                ->leftJoin('presensi_izinsakit', 'presensi_izinsakit_approve.kode_izin_sakit', '=', 'presensi_izinsakit.kode_izin_sakit')
+
+                ->leftJoin('presensi_izincuti_approve', 'presensi.id', '=', 'presensi_izincuti_approve.id_presensi')
+                ->leftJoin('presensi_izincuti', 'presensi_izincuti_approve.kode_izin_cuti', '=', 'presensi_izincuti.kode_izin_cuti')
+                ->select(
+                    'presensi.*',
+                    'presensi_jamkerja.nama_jam_kerja',
+                    'presensi_jamkerja.jam_masuk',
+                    'presensi_jamkerja.jam_pulang',
+                    'presensi_jamkerja.total_jam',
+                    'presensi_jamkerja.lintashari',
+                    'presensi_izinabsen.keterangan as keterangan_izin',
+                    'presensi_izinsakit.keterangan as keterangan_izin_sakit',
+                    'presensi_izincuti.keterangan as keterangan_izin_cuti'
+                )
                 ->orderBy('tanggal', 'desc')
                 ->limit(30)
                 ->get();
@@ -37,13 +60,18 @@ class DashboardController extends Controller
                 DB::raw("SUM(IF(status='a',1,0)) as alpa"),
                 DB::raw("SUM(IF(status='c',1,0)) as cuti")
             )
-                ->orderBy('tanggal', 'desc')
+                ->groupBy('presensi.nik')
                 ->limit(30)
-                ->where('nik', $userkaryawan->nik)
+                ->where('presensi.nik', $userkaryawan->nik)
                 ->first();
             return view('dashboard.karyawan', $data);
         } else {
-            return view('dashboard');
+            $sk = new Karyawan();
+            $data['status_karyawan'] = $sk->getRekapstatuskaryawan();
+            $data['chart'] = $chart->build();
+            $data['jkchart'] = $jkchart->build();
+            $data['pddchart'] = $pddchart->build();
+            return view('dashboard.dashboard', $data);
         }
     }
 }

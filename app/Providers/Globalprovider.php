@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\Izinabsen;
 use App\Models\Izincuti;
 use App\Models\Izinsakit;
+use App\Models\Pengaturanumum;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View;
@@ -43,12 +44,14 @@ class Globalprovider extends ServiceProvider
 
 
             $notifikasi_ajuan_absen = $notifikasi_izinabsen + $notifikasi_izincuti + $notifikasi_izinsakit;
+            $general_setting = Pengaturanumum::where('id', 1)->first();
             $shareddata = [
                 'notifikasi_izinabsen' => $notifikasi_izinabsen,
                 'notifikasi_izinsakit' => $notifikasi_izinsakit,
                 'notifikasi_izincuti' => $notifikasi_izincuti,
                 'notifikasi_ajuan_absen' => $notifikasi_ajuan_absen,
-                'data_izin' => $data_izin
+                'data_izin' => $data_izin,
+                'general_setting' => $general_setting
             ];
             View::share($shareddata);
         });

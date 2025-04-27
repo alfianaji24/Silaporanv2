@@ -15,11 +15,21 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-12">
-                        <form action="{{ route('permissions.index') }}">
+                        <form action="{{ route('users.index') }}">
                             <div class="row">
-                                <div class="col-lg-10 col-sm-12 col-md-12">
-                                    <x-input-with-icon label="Search Name" value="{{ Request('name') }}" name="name"
-                                        icon="ti ti-search" />
+                                <div class="col-lg-6 col-sm-12 col-md-12">
+                                    <x-input-with-icon label="Search Name" value="{{ Request('name') }}" name="name" icon="ti ti-search" />
+                                </div>
+                                <div class="col-lg-4 col-sm-12 col-md-12">
+                                    <div class="form-group">
+                                        <select name="role_id" id="role_id" class="form-select">
+                                            <option value="">Semua Role</option>
+                                            @foreach ($roles as $role)
+                                                <option value="{{ $role->id }}" @selected(Request('role_id') == $role->id)>{{ textUpperCase($role->name) }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                 </div>
                                 <div class="col-lg-2 col-sm-12 col-md-12">
                                     <button class="btn btn-primary">Cari</button>
@@ -58,8 +68,7 @@
                                             <td>
                                                 <div class="d-flex">
                                                     <div>
-                                                        <a href="#" class="me-2 editUser"
-                                                            id="{{ Crypt::encrypt($d->id) }}">
+                                                        <a href="#" class="me-2 editUser" id="{{ Crypt::encrypt($d->id) }}">
                                                             <i class="fa fa-edit text-success"></i>
                                                         </a>
                                                     </div>

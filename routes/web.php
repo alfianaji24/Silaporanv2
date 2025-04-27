@@ -3,7 +3,10 @@
 use App\Http\Controllers\CabangController;
 use App\Http\Controllers\CutiController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DendaController;
 use App\Http\Controllers\DepartemenController;
+use App\Http\Controllers\FacerecognitionController;
+use App\Http\Controllers\GeneralsettingController;
 use App\Http\Controllers\HariliburController;
 use App\Http\Controllers\IzinabsenController;
 use App\Http\Controllers\IzincutiController;
@@ -12,6 +15,7 @@ use App\Http\Controllers\JabatanController;
 use App\Http\Controllers\JamkerjabydeptController;
 use App\Http\Controllers\JamkerjaController;
 use App\Http\Controllers\KaryawanController;
+use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\PengajuanizinController;
 use App\Http\Controllers\Permission_groupController;
 use App\Http\Controllers\PermissionController;
@@ -92,6 +96,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/users/{id}/edit', 'edit')->name('users.edit');
         Route::put('/users/{id}/update', 'update')->name('users.update');
         Route::delete('/users/{id}/delete', 'destroy')->name('users.delete');
+
+        Route::get('/users/{id}/editpassword', 'editpassword')->name('users.editpassword');
+        Route::put('/users/{id}/updatepassword', 'updatepassword')->name('users.updatepassword');
     });
 
     //Data Master
@@ -181,12 +188,17 @@ Route::middleware('auth')->group(function () {
 
     Route::controller(PresensiController::class)->group(function () {
         Route::get('/presensi', 'index')->name('presensi.index')->can('presensi.index');
+        Route::get('/presensi/histori', 'histori')->name('presensi.histori')->can('presensi.index');
         Route::get('/presensi/create', 'create')->name('presensi.create')->can('presensi.create');
         Route::post('/presensi', 'store')->name('presensi.store')->can('presensi.create');
         Route::post('/presensi/edit', 'edit')->name('presensi.edit')->can('presensi.edit');
         Route::post('/presensi/update', 'update')->name('presensi.update')->can('presensi.edit');
         Route::delete('/presensi/{id}/delete', 'destroy')->name('presensi.delete')->can('presensi.delete');
-        Route::post('/presensi/show', 'show')->name('presensi.show')->can('presensi.index');
+        Route::get('/presensi/{id}/{status}/show', 'show')->name('presensi.show');
+        Route::post('/presensi/edit', 'edit')->name('presensi.edit')->can('presensi.edit');
+
+        Route::post('/presensi/getdatamesin', 'getdatamesin')->name('presensi.getdatamesin');
+        Route::post('/presensi/{pin}/{status_scan}/updatefrommachine', 'updatefrommachine')->name('presensi.updatefrommachine');
     });
 
     Route::controller(JamkerjabydeptController::class)->group(function () {
@@ -242,6 +254,34 @@ Route::middleware('auth')->group(function () {
 
     Route::controller(PengajuanizinController::class)->group(function () {
         Route::get('/pengajuanizin', 'index')->name('pengajuanizin.index');
+    });
+
+
+    Route::controller(GeneralsettingController::class)->group(function () {
+        Route::get('/generalsetting', 'index')->name('generalsetting.index')->can('generalsetting.index');
+        Route::put('/generalsetting/{id}', 'update')->name('generalsetting.update')->can('generalsetting.edit');
+    });
+
+    Route::controller(DendaController::class)->group(function () {
+        Route::get('/denda', 'index')->name('denda.index')->can('generalsetting.index');
+        Route::get('/denda/create', 'create')->name('denda.create')->can('generalsetting.index');
+        Route::post('/denda', 'store')->name('denda.store')->can('generalsetting.index');
+        Route::get('/denda/{id}/edit', 'edit')->name('denda.edit')->can('generalsetting.index');
+        Route::put('/denda/{id}', 'update')->name('denda.update')->can('generalsetting.index');
+        Route::delete('/denda/{id}/delete', 'destroy')->name('denda.delete')->can('generalsetting.index');
+    });
+
+    Route::controller(LaporanController::class)->group(function () {
+        Route::get('/laporan/presensi', 'presensi')->name('laporan.presensi')->can('laporan.presensi');
+        Route::post('/laporan/cetakpresensi', 'cetakpresensi')->name('laporan.cetakpresensi')->can('laporan.presensi');
+    });
+
+    Route::controller(FacerecognitionController::class)->group(function () {
+        Route::get('/facerecognition/{nik}/create', 'create')->name('facerecognition.create');
+        Route::post('/facerecognition/store', 'store')->name('facerecognition.store');
+        Route::delete('/facerecognition/{id}/delete', 'destroy')->name('facerecognition.delete');
+
+        Route::get('/facerecognition/getwajah', 'getWajah')->name('facerecognition.getwajah');
     });
 });
 

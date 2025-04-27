@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users_karyawan', function (Blueprint $table) {
-            $table->char('nik', 20);
+            $table->char('nik', 10);
             $table->bigInteger('id_user');
             $table->foreign('nik')->references('nik')->on('karyawan')->restrictOnDelete()->cascadeOnUpdate();
             $table->timestamps();

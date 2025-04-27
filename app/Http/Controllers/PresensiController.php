@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cabang;
+use App\Models\Denda;
 use App\Models\Detailharilibur;
 use App\Models\Detailsetjamkerjabydept;
+use App\Models\Facerecognition;
 use App\Models\Harilibur;
 use App\Models\Jamkerja;
 use App\Models\Karyawan;
+use App\Models\Pengaturanumum;
 use App\Models\Presensi;
 use App\Models\Setjamkerjabydate;
 use App\Models\Setjamkerjabyday;
@@ -28,22 +31,28 @@ class PresensiController extends Controller
         $tanggal = !empty($request->tanggal) ? $request->tanggal : date('Y-m-d');
         $presensi = Presensi::join('presensi_jamkerja', 'presensi.kode_jam_kerja', '=', 'presensi_jamkerja.kode_jam_kerja')
             ->select(
+                'presensi.id',
                 'presensi.nik',
                 'presensi.tanggal',
                 'presensi.kode_jam_kerja',
                 'nama_jam_kerja',
                 'jam_masuk',
                 'jam_pulang',
+                'istirahat',
+                'jam_awal_istirahat',
+                'jam_akhir_istirahat',
                 'jam_in',
                 'foto_in',
                 'jam_out',
                 'foto_out',
-                'status'
+                'status',
+                'lintashari'
             )
             ->where('presensi.tanggal', $tanggal);
 
         $query = Karyawan::query();
         $query->select(
+            'presensi.id',
             'karyawan.nik',
             'nama_karyawan',
             'kode_dept',
@@ -54,9 +63,16 @@ class PresensiController extends Controller
             'nama_jam_kerja',
             'jam_masuk',
             'jam_pulang',
+            'istirahat',
+            'jam_awal_istirahat',
+            'jam_akhir_istirahat',
             'jam_in',
             'jam_out',
-            'status'
+            'status',
+            'foto_in',
+            'foto_out',
+            'lintashari',
+            'karyawan.pin'
         );
         $query->leftjoinSub($presensi, 'presensi', function ($join) {
             $join->on('karyawan.nik', '=', 'presensi.nik');
@@ -67,6 +83,7 @@ class PresensiController extends Controller
         $cabang = Cabang::orderBy('kode_cabang')->get();
         $data['karyawan'] = $karyawan;
         $data['cabang'] = $cabang;
+        $data['denda_list'] = Denda::all()->toArray();
         return view('presensi.index', $data);
     }
     public function create($kode_jam_kerja = null)
@@ -151,7 +168,8 @@ class PresensiController extends Controller
         $data['jam_kerja'] = $jamkerja;
         $data['lokasi_kantor'] = $lokasi_kantor;
         $data['presensi'] = $presensi;
-
+        $data['karyawan'] = $karyawan;
+        $data['wajah'] = Facerecognition::where('nik', $karyawan->nik)->count();
 
         return view('presensi.create', $data);
     }
@@ -195,11 +213,14 @@ class PresensiController extends Controller
         //Get Lokasi Kantor
         $cabang = Cabang::where('kode_cabang', $karyawan->kode_cabang)->first();
         $lokasi_kantor = $cabang->lokasi_cabang;
+
+
+
         $koordinat_kantor = explode(",", $lokasi_kantor);
         $latitude_kantor = $koordinat_kantor[0];
         $longitude_kantor = $koordinat_kantor[1];
 
-        $jarak = hitungjarak($longitude_kantor, $latitude_kantor, $latitude_user, $longitude_user);
+        $jarak = hitungjarak($latitude_kantor, $longitude_kantor, $latitude_user, $longitude_user);
 
 
         $radius = round($jarak["meters"]);
@@ -375,19 +396,131 @@ class PresensiController extends Controller
     }
 
 
-    public function show(Request $request)
+    public function show($id, $status)
     {
-        $nik = Crypt::decrypt($request->nik);
-        $tanggal = $request->tanggal;
-
-        $karyawan = Karyawan::where('nik', $nik)->first();
-        $jam_kerja = Jamkerja::all();
-        $presensi = Presensi::where('nik', $nik)->where('tanggal', $tanggal)->first();
+        $presensi = Presensi::where('id', $id)
+            ->join('karyawan', 'presensi.nik', '=', 'karyawan.nik')
+            ->join('departemen', 'karyawan.kode_dept', '=', 'departemen.kode_dept')
+            ->join('jabatan', 'karyawan.kode_jabatan', '=', 'jabatan.kode_jabatan')
+            ->join('cabang', 'karyawan.kode_cabang', '=', 'cabang.kode_cabang')
+            ->first();
+        $cabang = Cabang::where('kode_cabang', $presensi->kode_cabang)->first();
+        $lokasi = explode(',', $cabang->lokasi_cabang);
+        $data['latitude'] = $lokasi[0];
+        $data['longitude'] = $lokasi[1];
+        // if (!empty($presensi->lokasi_cabang)) {
+        //     $lokasi = explode(',', $presensi->lokasi_cabang);
+        //     $data['latitude'] = $lokasi[0];
+        //     $data['longitude'] = $lokasi[1];
+        // } else {
+        //     $data['latitude'] = $cabang->latitude_cabang;
+        //     $data['longitude'] = $cabang->longitude_cabang;
+        // }
         $data['presensi'] = $presensi;
-        $data['karyawan'] = $karyawan;
-        $data['jam_kerja'] = $jam_kerja;
-        $data['tanggal'] = $tanggal;
+        $data['status'] = $status;
+        $data['cabang'] = $cabang;
 
         return view('presensi.show', $data);
+    }
+
+
+    public function getdatamesin(Request $request)
+    {
+
+        $tanggal = $request->tanggal;
+        $pin = $request->pin;
+        $general_setting = Pengaturanumum::where('id', 1)->first();
+        // dd($pin);
+        // $kode_jadwal = $request->kode_jadwal;
+        // if ($kode_jadwal == "JD004") {
+        //     $nextday = date('Y-m-d', strtotime('+1 day', strtotime($tanggal)));
+        // } else {
+        //     $nextday =  $tanggal;
+        // }
+        $specific_value = $pin;
+
+
+        //Mesin 1
+        $url = 'https://developer.fingerspot.io/api/get_attlog';
+        $data = '{"trans_id":"1", "cloud_id":"' . $general_setting->cloud_id . '", "start_date":"' . $tanggal . '", "end_date":"' . $tanggal . '"}';
+        $authorization = "Authorization: Bearer " . $general_setting->api_key;
+
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json', $authorization));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+        $result = curl_exec($ch);
+        curl_close($ch);
+        $res = json_decode($result);
+        $datamesin1 = $res->data;
+
+        $filtered_array = array_filter($datamesin1, function ($obj) use ($specific_value) {
+            return $obj->pin == $specific_value;
+        });
+
+
+        //Mesin 2
+        // $url = 'https://developer.fingerspot.io/api/get_attlog';
+        // $data = '{"trans_id":"1", "cloud_id":"C268909557211236", "start_date":"' . $tanggal . '", "end_date":"' . $tanggal . '"}';
+        // $authorization = "Authorization: Bearer QNBCLO9OA0AWILQD";
+
+        // $ch = curl_init($url);
+        // curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        // curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        // curl_setopt($ch, CURLOPT_POST, 1);
+        // curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        // curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json', $authorization));
+        // curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        // curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+        // $result2 = curl_exec($ch);
+        // curl_close($ch);
+        // $res2 = json_decode($result2);
+        // $datamesin2 = $res2->data;
+
+        // $filtered_array_2 = array_filter($datamesin2, function ($obj) use ($specific_value) {
+        //     return $obj->pin == $specific_value;
+        // });
+
+
+        return view('presensi.getdatamesin', compact('filtered_array'));
+    }
+
+
+    public function histori(Request $request)
+    {
+        $user = User::where('id', auth()->user()->id)->first();
+        $userkaryawan = Userkaryawan::where('id_user', auth()->user()->id)->first();
+        $data['datapresensi'] = Presensi::join('presensi_jamkerja', 'presensi.kode_jam_kerja', '=', 'presensi_jamkerja.kode_jam_kerja')
+            ->where('presensi.nik', $userkaryawan->nik)
+            ->leftJoin('presensi_izinabsen_approve', 'presensi.id', '=', 'presensi_izinabsen_approve.id_presensi')
+            ->leftJoin('presensi_izinabsen', 'presensi_izinabsen_approve.kode_izin', '=', 'presensi_izinabsen.kode_izin')
+
+            ->leftJoin('presensi_izinsakit_approve', 'presensi.id', '=', 'presensi_izinsakit_approve.id_presensi')
+            ->leftJoin('presensi_izinsakit', 'presensi_izinsakit_approve.kode_izin_sakit', '=', 'presensi_izinsakit.kode_izin_sakit')
+
+            ->leftJoin('presensi_izincuti_approve', 'presensi.id', '=', 'presensi_izincuti_approve.id_presensi')
+            ->leftJoin('presensi_izincuti', 'presensi_izincuti_approve.kode_izin_cuti', '=', 'presensi_izincuti.kode_izin_cuti')
+            ->select(
+                'presensi.*',
+                'presensi_jamkerja.nama_jam_kerja',
+                'presensi_jamkerja.jam_masuk',
+                'presensi_jamkerja.jam_pulang',
+                'presensi_jamkerja.total_jam',
+                'presensi_jamkerja.lintashari',
+                'presensi_izinabsen.keterangan as keterangan_izin',
+                'presensi_izinsakit.keterangan as keterangan_izin_sakit',
+                'presensi_izincuti.keterangan as keterangan_izin_cuti'
+            )
+            ->when(!empty($request->dari) && !empty($request->sampai), function ($q) use ($request) {
+                $q->whereBetween('presensi.tanggal', [$request->dari, $request->sampai]);
+            })
+            ->orderBy('presensi.tanggal', 'desc')
+            ->limit(30)
+            ->get();
+        return view('presensi.histori', $data);
     }
 }

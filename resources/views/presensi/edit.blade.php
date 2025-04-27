@@ -105,17 +105,6 @@
                 }
             });
             return false;
-        } else if (status == 'h' && (jam_in == '' || jam_out == '')) {
-            e.preventDefault();
-            Swal.fire({
-                icon: 'warning',
-                title: 'Oops...',
-                text: 'Jam Masuk dan Jam Pulang Harus Diisi!',
-                didClose: () => {
-                    $(this).find("#jam_in").focus();
-                }
-            });
-            return false;
         }
     });
 </script>

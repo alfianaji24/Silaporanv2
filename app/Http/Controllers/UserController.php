@@ -5,15 +5,27 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::with('roles')->paginate(10);
-        return view('settings.users.index', compact('users'));
+        $users = User::with('roles')
+            ->when($request->name, function ($query, $name) {
+                return $query->where('name', 'like', '%' . $name . '%');
+            })
+            ->when($request->role_id, function ($query, $role_id) {
+                return $query->whereHas('roles', function ($subQuery) use ($role_id) {
+                    $subQuery->where('role_id', $role_id);
+                });
+            })
+            ->paginate(10);
+
+        $roles = Role::orderBy('name')->get();
+        return view('settings.users.index', compact('users', 'roles'));
     }
 
     public function create()
@@ -104,6 +116,30 @@ class UserController extends Controller
         try {
             User::where('id', $id)->delete();
             return Redirect::back()->with(['success' => 'Data Berhasil Dihapus']);
+        } catch (\Exception $e) {
+            return Redirect::back()->with(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function editpassword($id)
+    {
+        $id = Crypt::decrypt($id);
+        $user = User::where('id', $id)->first();
+        return view('settings.users.editpassword', compact('user'));
+    }
+
+    public function updatepassword(Request $request, $id)
+    {
+        $id = Crypt::decrypt($id);
+        $request->validate([
+            'passwordbaru' => 'required',
+            'konfirmasipassword' => 'required|same:passwordbaru'
+        ]);
+        try {
+            User::where('id', $id)->update([
+                'password' => Hash::make($request->passwordbaru)
+            ]);
+            return Redirect::back()->with(['success' => 'Password Berhasil Diubah']);
         } catch (\Exception $e) {
             return Redirect::back()->with(['error' => $e->getMessage()]);
         }

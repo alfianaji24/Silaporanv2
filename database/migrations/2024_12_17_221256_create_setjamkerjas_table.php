@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('presensi_jamkerja_byday', function (Blueprint $table) {
-            $table->char('nik', 20);
+            $table->char('nik', 9);
             $table->string('hari');
             $table->char('kode_jam_kerja', 4);
             $table->foreign('nik')->references('nik')->on('karyawan')->restrictOnDelete()->cascadeOnUpdate();

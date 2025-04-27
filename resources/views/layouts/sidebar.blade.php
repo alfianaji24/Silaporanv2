@@ -20,6 +20,12 @@
 
      <ul class="menu-inner py-1">
          <!-- Dashboards -->
+         <li class="menu-item {{ request()->is(['dashboard', 'dashboard/*']) ? 'active' : '' }}">
+             <a href="{{ route('dashboard.index') }}" class="menu-link">
+                 <i class="menu-icon tf-icons ti ti-home"></i>
+                 <div>Dashboard</div>
+             </a>
+         </li>
          @if (auth()->user()->hasAnyPermission(['karyawan.index', 'departemen.index', 'cabang.index', 'cuti.index', 'jamkerja.index', 'jabatan.index']))
              <li
                  class="menu-item {{ request()->is(['karyawan', 'karyawan/*', 'departemen', 'cabang', 'cuti', 'jamkerja', 'jabatan']) ? 'open' : '' }}">
@@ -93,13 +99,27 @@
                  </a>
              </li>
          @endif
-         @if (auth()->user()->hasAnyPermission(['harilibur.index', 'jamkerjabydept.index']))
-             <li class="menu-item {{ request()->is(['harilibur', 'harilibur/*', 'jamkerjabydept', 'jamkerjabydept/*']) ? 'open' : '' }}">
+         @if (auth()->user()->hasAnyPermission(['harilibur.index', 'jamkerjabydept.index', 'generalsetting.index']))
+             <li
+                 class="menu-item {{ request()->is(['harilibur', 'harilibur/*', 'jamkerjabydept', 'jamkerjabydept/*', 'generalsetting', 'denda']) ? 'open' : '' }}">
                  <a href="javascript:void(0);" class="menu-link menu-toggle">
                      <i class="menu-icon tf-icons ti ti-settings"></i>
                      <div>Konfigurasi</div>
                  </a>
                  <ul class="menu-sub">
+                     <li class="menu-item {{ request()->is(['generalsetting', 'generalsetting/*']) ? 'active' : '' }}">
+                         <a href="{{ route('generalsetting.index') }}" class="menu-link">
+                             <div>General Setting</div>
+                         </a>
+                     </li>
+                     @if ($general_setting->denda)
+                         <li class="menu-item {{ request()->is(['denda', 'denda/*']) ? 'active' : '' }}">
+                             <a href="{{ route('denda.index') }}" class="menu-link">
+                                 <div>Denda</div>
+                             </a>
+                         </li>
+                     @endif
+
                      <li class="menu-item {{ request()->is(['harilibur', 'harilibur/*']) ? 'active' : '' }}">
                          <a href="{{ route('harilibur.index') }}" class="menu-link">
                              <div>Hari Libur</div>
@@ -113,12 +133,27 @@
                  </ul>
              </li>
          @endif
-         @if (auth()->user()->hasRole(['super admin', 'gm administrasi']))
+         @if (auth()->user()->hasAnyPermission(['laporan.presensi']))
+             <li class="menu-item {{ request()->is(['laporan', 'laporan/*']) ? 'open' : '' }} ">
+                 <a href="javascript:void(0);" class="menu-link menu-toggle">
+                     <i class="menu-icon tf-icons ti ti-adjustments-alt"></i>
+                     <div>Laporan</div>
+                 </a>
+                 <ul class="menu-sub">
+                     <li class="menu-item {{ request()->is(['laporan/presensi']) ? 'active' : '' }}">
+                         <a href="{{ route('laporan.presensi') }}" class="menu-link">
+                             <div>Presensi</div>
+                         </a>
+                     </li>
+                 </ul>
+             </li>
+         @endif
+         @if (auth()->user()->hasRole(['super admin']))
              <li
                  class="menu-item {{ request()->is(['roles', 'roles/*', 'permissiongroups', 'permissiongroups/*', 'permissions', 'permissions/*', 'users', 'users/*']) ? 'open' : '' }} ">
                  <a href="javascript:void(0);" class="menu-link menu-toggle">
-                     <i class="menu-icon tf-icons ti ti-settings"></i>
-                     <div>Settings</div>
+                     <i class="menu-icon tf-icons ti ti-adjustments-alt"></i>
+                     <div>Utilities</div>
                  </a>
                  <ul class="menu-sub">
                      <li class="menu-item {{ request()->is(['users', 'users/*']) ? 'active' : '' }}">
@@ -144,6 +179,7 @@
                  </ul>
              </li>
          @endif
+
      </ul>
  </aside>
  <!-- / Menu -->

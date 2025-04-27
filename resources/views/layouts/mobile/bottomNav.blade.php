@@ -6,7 +6,7 @@
             <strong>Home</strong>
         </div>
     </a>
-    <a href="#" class="item {{ request()->is('presensi/histori') ? 'active' : '' }}">
+    <a href="{{ route('presensi.histori') }}" class="item {{ request()->is('presensi/histori') ? 'active' : '' }}">
         <div class="col">
             <ion-icon name="document-text-outline" role="img" class="md hydrated" aria-label="document text outline"></ion-icon>
             <strong>Histori</strong>
@@ -26,10 +26,11 @@
             <strong>Pengajuan Izin</strong>
         </div>
     </a>
-    <a href="#" class="item {{ request()->is('editprofile') ? 'active' : '' }}">
+    <a href="{{ route('users.editpassword', Crypt::encrypt(Auth::user()->id)) }}"
+        class="item {{ request()->is('/users/:id/editpassword') ? 'active' : '' }}">
         <div class="col">
-            <ion-icon name="people-outline" role="img" class="md hydrated" aria-label="people outline"></ion-icon>
-            <strong>Profile</strong>
+            <ion-icon name="settings-outline"></ion-icon>
+            <strong>Setting</strong>
         </div>
     </a>
 </div>

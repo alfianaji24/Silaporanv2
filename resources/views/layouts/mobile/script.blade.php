@@ -22,6 +22,7 @@
 <script src="{{ asset('assets/template/js/base.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/rolldate@3.1.3/dist/rolldate.min.js"></script>
 <script src="{{ asset('assets/vendor/libs/toastr/toastr.js') }}"></script>
+<script src="{{ asset('assets/vendor/face-api.min.js') }}"></script>
 <style>
     .toast-bottom-full-width {
         bottom: 5rem
@@ -91,7 +92,31 @@
     </script>
 @endif
 <script>
+    $('.cancel-confirm').click(function(event) {
+        var form = $(this).closest("form");
+        var name = $(this).data("name");
+        event.preventDefault();
+        Swal.fire({
+            title: `Apakah Anda Yakin Ingin Membatalkan Data Ini ?`,
+            text: "Data ini akan dibatalkan.",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+            showCancelButton: true,
+            confirmButtonColor: "#554bbb",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, Batalkan Saja Saja!"
+        }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
+    });
+</script>
+<script>
     $(document).ready(function() {
+
         function adjustZoom() {
             var width = $(window).width(); // Ambil lebar layar
             //alert(width);

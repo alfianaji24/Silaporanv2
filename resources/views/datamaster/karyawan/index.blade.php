@@ -56,6 +56,7 @@
                                         <th>Tanggal Masuk</th>
                                         <th class="text-center"><i class="ti ti-map-pin"></i></th>
                                         <th class="text-center"><i class="ti ti-clock-hour-3"></i></th>
+                                        <th class="text-center"><i class="ti ti-fingerprint"></i></th>
                                         <th>Foto</th>
                                         <th>#</th>
                                     </tr>
@@ -100,6 +101,7 @@
                                                     </a>
                                                 @endif
                                             </td>
+                                            <td>{{ $d->pin }}</td>
                                             <td>
                                                 @if (!empty($d->foto))
                                                     @if (Storage::disk('public')->exists('/karyawan/' . $d->foto))

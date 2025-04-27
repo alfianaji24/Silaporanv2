@@ -212,7 +212,9 @@ class IzinabsenController extends Controller
                     $jamkerja = Setjamkerjabyday::join('presensi_jamkerja', 'presensi_jamkerja_byday.kode_jam_kerja', '=', 'presensi_jamkerja.kode_jam_kerja')
                         ->where('nik', $izinabsen->nik)->where('hari', $namahari)
                         ->first();
-                } else {
+                }
+
+                if ($jamkerja == null) {
                     $jamkerja = Detailsetjamkerjabydept::join('presensi_jamkerja_bydept', 'presensi_jamkerja_bydept_detail.kode_jk_dept', '=', 'presensi_jamkerja_bydept.kode_jk_dept')
                         ->join('presensi_jamkerja', 'presensi_jamkerja_bydept_detail.kode_jam_kerja', '=', 'presensi_jamkerja.kode_jam_kerja')
                         ->where('kode_dept', $kode_dept)

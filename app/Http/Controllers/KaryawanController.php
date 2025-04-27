@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cabang;
 use App\Models\Departemen;
+use App\Models\Facerecognition;
 use App\Models\Jabatan;
 use App\Models\Jamkerja;
 use App\Models\Karyawan;
@@ -190,6 +191,7 @@ class KaryawanController extends Controller
                 'tanggal_masuk' => $request->tanggal_masuk,
                 'status_karyawan' => $request->status_karyawan,
                 'status_aktif_karyawan' => $request->status_aktif_karyawan,
+                'pin' => $request->pin
             ];
 
             $data = array_merge($data_karyawan, $data_foto);
@@ -257,7 +259,9 @@ class KaryawanController extends Controller
             ->join('status_kawin', 'karyawan.kode_status_kawin', '=', 'status_kawin.kode_status_kawin')
 
             ->first();
-        return view('datamaster.karyawan.show', compact('karyawan'));
+
+        $karyawan_wajah = Facerecognition::where('nik', $nik)->get();
+        return view('datamaster.karyawan.show', compact('karyawan', 'karyawan_wajah'));
     }
 
 

@@ -1,5 +1,22 @@
 @extends('layouts.mobile.app')
 @section('content')
+    <style>
+        /* Tambahkan style untuk header dan content */
+        #header-section {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        #content-section {
+            margin-top: 70px;
+            padding-top: 5px;
+            position: relative;
+            z-index: 1;
+        }
+    </style>
     <div id="header-section">
         <div class="appHeader bg-primary text-light">
             <div class="left">

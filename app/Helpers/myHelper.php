@@ -1,6 +1,8 @@
 <?php
 
+use App\Models\Detailharilibur;
 use App\Models\Tutuplaporan;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Redirect;
 
 function buatkode($nomor_terakhir, $kunci, $jumlah_karakter = 0)
@@ -59,6 +61,9 @@ function getfotoKaryawan($file)
     $url = url('/storage/karyawan/' . $file);
     return $url;
 }
+
+
+
 
 
 function toNumber($value)
@@ -213,8 +218,10 @@ function formatIndo3($date)
 
 function formatName2($name)
 {
-    $words = explode(' ', $name);
-    return implode(' ', array_slice($words, 0, 2));
+    // Kode ini mengambil nama lengkap dan mengembalikan hanya dua kata pertama dari nama tersebut.
+    // Contoh: jika nama lengkap adalah "John Doe Smith", maka kode ini akan mengembalikan "John Doe".
+    $words = explode(' ', $name); // Memecah nama menjadi array kata-kata berdasarkan spasi.
+    return implode(' ', array_slice($words, 0, 2)); // Mengembalikan dua kata pertama yang dihubungkan dengan spasi.
 }
 
 
@@ -309,7 +316,47 @@ function getSid($file)
     return $url;
 }
 
+function hitungpulangcepat($tanggal_presensi, $jam_out, $jam_pulang, $istirahat, $jam_awal_istirahat, $jam_akhir_istirahat, $lintashari)
+{
 
+
+    $tanggal = $lintashari == 1 ? date('Y-m-d', strtotime($tanggal_presensi . ' +1 day')) : $tanggal_presensi;
+    $jam_awal_istirahat = $tanggal . ' ' . $jam_awal_istirahat;
+    $jam_akhir_istirahat = $tanggal . ' ' . $jam_akhir_istirahat;
+    $jam_pulang = $tanggal . ' ' . $jam_pulang;
+
+    if (empty($jam_out)) {
+        return 0;
+    }
+    if ($istirahat == 1) {
+        if ($jam_out <= $jam_akhir_istirahat && $jam_out >= $jam_awal_istirahat) {
+            $j_pulang = $jam_akhir_istirahat;
+        } else {
+            $j_pulang = $jam_out;
+        }
+    } else {
+        $j_pulang = $jam_out;
+    }
+
+    if ($j_pulang < $jam_pulang) {
+        $j1 = strtotime($j_pulang);
+        $j2 = strtotime($jam_pulang);
+        $diffpulangcepat = $j2 - $j1;
+
+        $jam_pulangcepat = floor($diffpulangcepat / (60 * 60));
+        $menit_pulangcepat = floor(($diffpulangcepat - $jam_pulangcepat * (60 * 60)) / 60);
+
+        $jpulangcepat = $jam_pulangcepat <= 9 ? '0' . $jam_pulangcepat : $jam_pulangcepat;
+        $mpulangcepat = $menit_pulangcepat <= 9 ? '0' . $menit_pulangcepat : $menit_pulangcepat;
+
+        $keterangan_pulangcepat = $jpulangcepat . ':' . $mpulangcepat;
+        $desimal_pulangcepat = $jam_pulangcepat +   ROUND(($menit_pulangcepat / 60), 2);
+
+        return $desimal_pulangcepat;
+    } else {
+        return 0;
+    }
+}
 function hitungjamterlambat($jam_in, $jam_mulai)
 {
 
@@ -350,15 +397,116 @@ function hitungjamterlambat($jam_in, $jam_mulai)
                 'menitterlambat' => $menitterlambat,
                 'desimal_terlambat' => $desimal_terlambat,
                 'show' => '<span class="badge bg-danger">' . $show . '</span>',
+                'show_laporan' => 'Telat :' . $show,
+                'color' => 'red'
                 // 'color_terlambat' => $color_terlambat
             ];
         } else {
             return [
+                'menitterlambat' => 0,
                 'desimal_terlambat' => 0,
-                'show' => '<span class="badge bg-success">Tepat Waktu</span>'
+                'color' => 'green',
+                'show' => '<span class="badge bg-success">Tepat Waktu</span>',
+                'show_laporan' => 'Tepat Waktu'
             ];
         }
     } else {
         return [];
     }
+}
+
+
+function hitungdenda($denda_list, $terlambat)
+{
+    $denda_terlambat = 0;
+    foreach ($denda_list as $denda) {
+        if ($terlambat >= $denda['dari'] && $terlambat <= $denda['sampai']) {
+            $denda_terlambat = $denda['denda'];
+            break;
+        }
+    }
+    return $denda_terlambat;
+}
+
+function hitungJumlahHari($tanggal_awal, $tanggal_akhir)
+{
+    $start_date = Carbon::parse($tanggal_awal);
+    $end_date = Carbon::parse($tanggal_akhir);
+
+    $jumlah_hari = $start_date->diffInDays($end_date);
+
+    return $jumlah_hari;
+}
+
+
+function getdatalibur($dari, $sampai)
+{
+    $no = 1;
+    $libur = [];
+    $ceklibur = Detailharilibur::select(
+        'nik',
+        'tanggal',
+        'kode_cabang',
+        'keterangan',
+    )
+        ->leftJoin('hari_libur', 'hari_libur_detail.kode_libur', '=', 'hari_libur.kode_libur')
+        // ->where('kategori', 1)
+        ->whereBetween('tanggal', [$dari, $sampai])->get();
+
+    foreach ($ceklibur as $d) {
+        $libur[] = [
+            'nik' => $d->nik,
+            'kode_cabang' => $d->kode_cabang,
+            'tanggal' => $d->tanggal,
+            'keterangan' => $d->keterangan
+        ];
+    }
+
+    return $libur;
+}
+
+function ceklibur($array, $search_list)
+{
+
+    // Create the result array
+    $result = array();
+
+    // Iterate over each array element
+    foreach ($array as $key => $value) {
+
+        // Iterate over each search condition
+        foreach ($search_list as $k => $v) {
+
+            // If the array element does not meet
+            // the search condition then continue
+            // to the next element
+            if (!isset($value[$k]) || $value[$k] != $v) {
+
+                // Skip two loops
+                continue 2;
+            }
+        }
+
+        // Append array element's key to the
+        //result array
+        $result[] = $value;
+    }
+
+    // Return result
+    return $result;
+}
+
+function getHari($date)
+{
+    $days = array(
+        'Sunday' => 'Minggu',
+        'Monday' => 'Senin',
+        'Tuesday' => 'Selasa',
+        'Wednesday' => 'Rabu',
+        'Thursday' => 'Kamis',
+        'Friday' => 'Jumat',
+        'Saturday' => 'Sabtu'
+    );
+    $dayName = date('l', strtotime($date));
+    return $days[$dayName];
 }
