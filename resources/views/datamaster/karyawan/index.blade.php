@@ -24,14 +24,14 @@
                                     <x-input-with-icon label="Cari Nama Karyawan" value="{{ Request('nama_karyawan') }}" name="nama_karyawan"
                                         icon="ti ti-search" />
                                 </div>
-                                <div class="col-lg-2 col-sm-12 col-md-12">
+                                <!-- <div class="col-lg-2 col-sm-12 col-md-12">
                                     <x-select label="Cabang" name="kode_cabang" :data="$cabang" key="kode_cabang" textShow="nama_cabang"
                                         selected="{{ Request('kode_cabang') }}" />
-                                </div>
-                                <div class="col-lg-2 col-sm-12 col-md-12">
+                                </div> -->
+                                <!-- <div class="col-lg-2 col-sm-12 col-md-12">
                                     <x-select label="Departemen" name="kode_dept" :data="$departemen" key="kode_dept" textShow="nama_dept"
                                         selected="{{ Request('kode_dept') }}" upperCase="true" />
-                                </div>
+                                </div> -->
                                 <div class="col-lg-2 col-sm-12 col-md-12">
                                     <button class="btn btn-primary"><i class="ti ti-icons ti-search me-1"></i>Cari</button>
                                 </div>
@@ -49,9 +49,9 @@
                                     <tr>
                                         <th>NIK</th>
                                         <th>Nama Karyawan</th>
-                                        <th>Dept</th>
+                                        <!-- <th>Dept</th> -->
                                         <th>Jabatan</th>
-                                        <th>Cabang</th>
+                                        <!-- <th>Cabang</th> -->
                                         <th>Status</th>
                                         <th>Tanggal Masuk</th>
                                         <th class="text-center"><i class="ti ti-map-pin"></i></th>
@@ -66,9 +66,9 @@
                                         <tr>
                                             <td>{{ $d->nik }}</td>
                                             <td>{{ $d->nama_karyawan }}</td>
-                                            <td>{{ $d->nama_dept }}</td>
+                                            <!-- <td>{{ $d->nama_dept }}</td> -->
                                             <td>{{ $d->nama_jabatan }}</td>
-                                            <td>{{ $d->nama_cabang }}</td>
+                                            <!-- <td>{{ $d->nama_cabang }}</td> -->
                                             <td>
                                                 @if ($d->status_aktif_karyawan == '1')
                                                     <span class="badge bg-success">Aktif</span>
@@ -76,7 +76,7 @@
                                                     <span class="badge bg-danger">Non Aktif</span>
                                                 @endif
                                             </td>
-                                            <td>{{ date('d-m-y', strtotime($d->tanggal_masuk)) }}</td>
+                                            <td>{{ date('d  M  Y', strtotime($d->tanggal_masuk)) }}</td>
                                             <td class="text-center">
 
                                                 @if ($d->lock_location == '1')

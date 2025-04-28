@@ -72,10 +72,10 @@
 <script src="{{ asset('assets/js/jquery.mask.min.js') }}"></script>
 <script src="{{ asset('assets/vendor/libs/flatpickr/flatpickr.js') }}"></script>
 
-<script>
+<!-- <script>
     $(function() {
 
         $(".flatpickr-date").flatpickr();
         $('#nik').mask('00.00.000');
     });
-</script>
+</script> -->
