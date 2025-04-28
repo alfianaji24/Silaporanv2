@@ -62,7 +62,7 @@
                         {{-- <img src="{{ asset('assets/img/logo/hibah.png') }}" alt="" width="160"> --}}
                     </div>
                     <!-- /Logo -->
-                    <h4 class="mb-1 pt-2">E-PRESENSI! 👋</h4>
+                    <h4 class="mb-1 pt-2">SILAPORAN 👋</h4>
                     <p class="mb-4">Silahkan Login !</p>
                     <x-alert-error :messages="$errors->get('id_user')" class="mt-2" />
                     <form id="formAuthentication" class="mb-3" action="{{ route('login') }}" method="POST">
@@ -75,7 +75,7 @@
                         <div class="mb-3 form-password-toggle">
                             <div class="d-flex justify-content-between">
                                 <label class="form-label" for="password">Password</label>
-                                <a href="auth-forgot-password-basic.html">
+                                <a href="#">
                                     <small>Forgot Password?</small>
                                 </a>
                             </div>
@@ -96,13 +96,9 @@
                             <button class="btn btn-primary d-grid w-100" type="submit">Sign in</button>
                         </div>
                     </form>
-
-
-
                     <div class="divider my-4">
                         <div class="divider-text">or</div>
                     </div>
-
                     <div class="d-flex justify-content-center">
                         <a href="javascript:;" class="btn btn-icon btn-label-facebook me-3">
                             <i class="tf-icons fa-brands fa-facebook-f fs-5"></i>
@@ -111,7 +107,6 @@
                         <a href="javascript:;" class="btn btn-icon btn-label-google-plus me-3">
                             <i class="tf-icons fa-brands fa-google fs-5"></i>
                         </a>
-
                         <a href="javascript:;" class="btn btn-icon btn-label-twitter">
                             <i class="tf-icons fa-brands fa-twitter fs-5"></i>
                         </a>
