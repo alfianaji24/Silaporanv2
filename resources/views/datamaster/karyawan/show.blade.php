@@ -120,11 +120,11 @@
                             Pendidikan Terakhir:</span>
                         <span>{{ $karyawan->pendidikan_terakhir }} </span>
                     </li>
-                    <li class="d-flex align-items-center mb-3">
+                    <!-- <li class="d-flex align-items-center mb-3">
                         <i class="ti ti-building text-heading"></i><span class="fw-medium mx-2 text-heading">
                             Perusahaan:</span>
                         <span>{{ $karyawan->kode_perusahaan == 'MP' ? 'Makmur Permata' : 'Pacific' }} </span>
-                    </li>
+                    </li> -->
                     <li class="d-flex align-items-center mb-3">
                         <i class="ti ti-building text-heading"></i><span class="fw-medium mx-2 text-heading">
                             Kantor:</span>

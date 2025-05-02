@@ -23,8 +23,6 @@
                     <th rowspan="3">Nik</th>
                     <th rowspan="3">Nama Karyawan</th>
                     <th rowspan="3">Jabatan</th>
-                    <th rowspan="3">Dept</th>
-                    <th rowspan="3">Kode Cabang</th>
                     <th colspan="{{ $jmlhari }}">Tanggal</th>
                     <th rowspan="3">Denda</th>
                     <th rowspan="3">Pot. Jam</th>
@@ -62,8 +60,6 @@
                         <td style="width:2%">'{{ $d['nik'] }}</td>
                         <td style="width:5%">{{ $d['nama_karyawan'] }}</td>
                         <td style="width:5%">{{ $d['nama_jabatan'] }}</td>
-                        <td style="width:5%">{{ $d['nama_dept'] }}</td>
-                        <td style="width:5%">{{ $d['kode_cabang'] }}</td>
                         @php
                             $total_denda = 0;
                             $total_potongan_jam = 0;
@@ -164,8 +160,6 @@
                                             ? '<span style="color:red">PJ: ' . formatAngkaDesimal($potongan_jam) . '</span>'
                                             : '';
                                         $ket =
-                                            $ket_nama_jam_kerja .
-                                            $ket_jadwal_kerja .
                                             '<br>' .
                                             $ket_presensi .
                                             '<br>' .

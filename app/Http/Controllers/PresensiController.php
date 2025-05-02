@@ -394,6 +394,109 @@ class PresensiController extends Controller
             return Redirect::back()->with(messageError($e->getMessage()));
         }
     }
+    public function updatefrommachine(Request $request)
+    {
+        try {
+            $original_data = file_get_contents('php://input');
+            if (empty($original_data)) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Input data is empty'
+                ]);
+            }
+
+            // Validate JSON format
+            $decoded_data = json_decode($original_data, true);
+            if ($decoded_data === null && json_last_error() !== JSON_ERROR_NONE) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Invalid JSON format: ' . json_last_error_msg()
+                ]);
+            }
+
+            // Validate required data structure
+            if (!isset($decoded_data['data']) || !is_array($decoded_data['data'])) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Invalid data format: data field must be an object'
+                ]);
+            }
+
+            $data = $decoded_data['data'];
+
+            // Validate required fields
+            $required_fields = ['pin', 'status_scan', 'scan'];
+            foreach ($required_fields as $field) {
+                if (!isset($data[$field]) || empty($data[$field])) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => "Missing or empty required field: {$field}"
+                    ]);
+                }
+            }
+
+            $pin = $data['pin'];
+            $status_scan = $data['status_scan'];
+            $scan = $data['scan'];
+
+            // Validate scan date format
+            if (!strtotime($scan)) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Invalid scan date format'
+                ]);
+            }
+
+            $karyawan = Karyawan::where('pin', $pin)->first();
+            if ($karyawan == null) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Karyawan Tidak Ditemukan'
+                ]);
+            }
+
+            $tanggal = date("Y-m-d", strtotime($scan));
+            $jam = date("H:i:s", strtotime($scan));
+
+            $presensi = Presensi::where('nik', $karyawan->nik)
+                ->where('tanggal', $tanggal)
+                ->first();
+
+            if ($presensi) {
+                if ($status_scan == 'in') {
+                    $presensi->jam_in = $jam;
+                } else {
+                    $presensi->jam_out = $jam;
+                }
+                $presensi->save();
+            } else {
+                if ($status_scan == 'in') {
+                    Presensi::create([
+                        'nik' => $karyawan->nik,
+                        'tanggal' => $tanggal,
+                        'jam_in' => $jam
+                    ]);
+                } else {
+                    Presensi::create([
+                        'nik' => $karyawan->nik,
+                        'tanggal' => $tanggal,
+                        'jam_out' => $jam
+                    ]);
+                }
+            }
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Data Berhasil Disimpan'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Error: ' . $e->getMessage()
+            ]);
+        }
+    }
 
 
     public function show($id, $status)

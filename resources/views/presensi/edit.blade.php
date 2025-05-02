@@ -10,13 +10,17 @@
                 <td class="text-end">{{ $karyawan->nama_karyawan }}</td>
             </tr>
             <tr>
+                <th>Jabatan</th>
+                <td class="text-end">{{ $karyawan->nama_jabatan }}</td>
+            </tr>
+            <!-- <tr>
                 <th>Dept</th>
                 <td class="text-end">{{ $karyawan->kode_dept }}</td>
             </tr>
             <tr>
                 <th>Cabang</th>
                 <td class="text-end">{{ $karyawan->kode_cabang }}</td>
-            </tr>
+            </tr> -->
         </table>
     </div>
 </div>

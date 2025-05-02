@@ -21,7 +21,7 @@
 
 
             <!-- Quick links  -->
-            <li class="nav-item dropdown-shortcuts navbar-dropdown dropdown me-2 me-xl-0">
+            <!-- <li class="nav-item dropdown-shortcuts navbar-dropdown dropdown me-2 me-xl-0">
                 <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown" data-bs-auto-close="outside"
                     aria-expanded="false">
                     <i class="ti ti-layout-grid-add ti-md"></i>
@@ -103,7 +103,7 @@
                         </div>
                     </div>
                 </div>
-            </li>
+            </li> -->
             <!-- Quick links -->
 
             <!-- Notification -->
@@ -201,7 +201,7 @@
                     <li>
                         <div class="dropdown-divider"></div>
                     </li>
-                    <li>
+                    <!-- <li>
                         <a class="dropdown-item" href="pages-profile-user.html">
                             <i class="ti ti-user-check me-2 ti-sm"></i>
                             <span class="align-middle">My Profile</span>
@@ -236,10 +236,10 @@
                             <i class="ti ti-currency-dollar me-2 ti-sm"></i>
                             <span class="align-middle">Pricing</span>
                         </a>
-                    </li>
-                    <li>
+                    </li> -->
+                    <!-- <li>
                         <div class="dropdown-divider"></div>
-                    </li>
+                    </li> -->
                     <li>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
