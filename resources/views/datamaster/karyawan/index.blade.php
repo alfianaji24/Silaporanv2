@@ -53,7 +53,7 @@
                                         <th>Jabatan</th>
                                         <!-- <th>Cabang</th> -->
                                         <th>Status</th>
-                                        <th>Tanggal Masuk</th>
+                                        <th>Tanggal Lahir</th>
                                         <th class="text-center"><i class="ti ti-map-pin"></i></th>
                                         <th class="text-center"><i class="ti ti-clock-hour-3"></i></th>
                                         <th class="text-center"><i class="ti ti-fingerprint"></i></th>
@@ -76,7 +76,7 @@
                                                     <span class="badge bg-danger">Non Aktif</span>
                                                 @endif
                                             </td>
-                                            <td>{{ date('d  M  Y', strtotime($d->tanggal_masuk)) }}</td>
+                                            <td>{{ date('d  M  Y', strtotime($d->tanggal_lahir)) }}</td>
                                             <td class="text-center">
 
                                                 @if ($d->lock_location == '1')
@@ -190,7 +190,6 @@
 @push('myscript')
 <script>
     $(function() {
-
         function loading() {
             $("#loadmodal").html(`<div class="sk-wave sk-primary" style="margin:auto">
             <div class="sk-wave-rect"></div>
@@ -206,8 +205,6 @@
             $(".modal-title").text("Tambah Data Karyawan");
             $("#loadmodal").load("{{ route('karyawan.create') }}");
         });
-
-
         $(".btnEdit").click(function() {
             loading();
             const nik = $(this).attr("nik");

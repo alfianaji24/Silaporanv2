@@ -77,6 +77,7 @@ class PresensiController extends Controller
         $query->leftjoinSub($presensi, 'presensi', function ($join) {
             $join->on('karyawan.nik', '=', 'presensi.nik');
         });
+        $query->where('karyawan.status_aktif_karyawan', 1); // Hanya tampilkan karyawan aktif
         $query->orderBy('nama_karyawan');
         $karyawan = $query->paginate(10);
         $karyawan->appends(request()->all());

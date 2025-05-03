@@ -102,6 +102,7 @@ class LaporanController extends Controller
         $q_presensi->leftJoinSub($presensi_detail, 'presensi', function ($join) {
             $join->on('karyawan.nik', '=', 'presensi.nik');
         });
+        $q_presensi->where('karyawan.status_aktif_karyawan', 1); // Menambahkan filter untuk karyawan aktif saja
         $q_presensi->orderBy('karyawan.nama_karyawan');
         $presensi = $q_presensi->get();
 
