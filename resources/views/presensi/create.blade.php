@@ -16,8 +16,9 @@
             width: 100% !important;
             margin: 0 !important;
             margin-top: 30px !important;
+            margin-bottom: 60px !important;
             padding: 10px !important;
-            height: calc(100vh - 95px) !important;
+            height: calc(100vh - 120px) !important;
             border-radius: 15px;
             overflow: hidden;
             position: relative;
@@ -100,7 +101,7 @@
         /* Style untuk tombol scan */
         .scan-buttons {
             position: absolute;
-            bottom: 30px;
+            bottom: 40px;
             left: 0;
             right: 0;
             z-index: 20;

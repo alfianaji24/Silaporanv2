@@ -13,6 +13,7 @@
                 @can('karyawan.create')
                     <a href="#" class="btn btn-primary" id="btnCreate"><i class="fa fa-plus me-2"></i> Tambah
                         Karyawan</a>
+                <a href="#" class="btn btn-success" id="btnImport"><i class="ti ti-file-import me-2"></i> Import Excel</a>
                 @endcan
             </div>
             <div class="card-body">
@@ -163,7 +164,9 @@
                                                                 <i class="ti ti-user-plus text-danger"></i>
                                                             </a>
                                                         @else
-                                                            <i class="ti ti-user text-success"></i>
+                                                            <a href="{{ route('karyawan.deleteuser', Crypt::encrypt($d->nik)) }}">
+                                                                <i class="ti ti-user text-success"></i>
+                                                            </a>
                                                         @endif
                                                     @endcan
 
@@ -186,6 +189,7 @@
 </div>
 <x-modal-form id="modal" show="loadmodal" />
 <x-modal-form id="modalSetJamkerja" show="loadmodalSetJamkerja" size="modal-lg" title="Set Jam Kerja" />
+<x-modal-form id="modalImport" show="loadmodalImport" size="modal-lg" title="Import Data Karyawan" />
 @endsection
 @push('myscript')
 <script>
@@ -205,12 +209,23 @@
             $(".modal-title").text("Tambah Data Karyawan");
             $("#loadmodal").load("{{ route('karyawan.create') }}");
         });
+        $("#btnImport").click(function() {
+            $("#modalImport").modal("show");
+            $("#loadmodalImport").html(`<div class="sk-wave sk-primary" style="margin:auto">
+            <div class="sk-wave-rect"></div>
+            <div class="sk-wave-rect"></div>
+            <div class="sk-wave-rect"></div>
+            <div class="sk-wave-rect"></div>
+            <div class="sk-wave-rect"></div>
+            </div>`);
+            $("#loadmodalImport").load("{{ route('karyawan.import') }}");
+        });
         $(".btnEdit").click(function() {
             loading();
             const nik = $(this).attr("nik");
             $("#modal").modal("show");
             $(".modal-title").text("Edit Data Karyawan");
-            $("#loadmodal").load(`/karyawan/${nik}`);
+            $("#loadmodal").load(`/karyawan/${nik}/edit`);
         });
 
         $(".btnSetJamkerja").click(function() {

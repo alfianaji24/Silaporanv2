@@ -85,6 +85,10 @@
                                     <span class="invalid-feedback">{{ $message }}</span>
                                 @enderror --}}
                             </div>
+                            <div class="checkbox-wrap">
+                                <input type="checkbox" id="remember" name="remember" style="margin-right: 8px; width: 16px; height: 16px;">
+                                <label for="remember" style="color: #666; font-size: 14px; cursor: pointer; margin-left: 20px;">Remember Me</label>
+                            </div>
 
                             <input type="submit" value="Sign In" class="sign-btn" />
 

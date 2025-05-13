@@ -1,10 +1,13 @@
 @extends('layouts.app')
-@section('titlepage', 'Jam Kerja Departemen')
+@section('titlepage', 'General Settings')
 
 @section('content')
 @section('navigasi')
     <span>General Settings</span>
 @endsection
+@php
+    use Illuminate\Support\Facades\Storage;
+@endphp
 <style>
     .checkbox-wrapper-55 input[type="checkbox"] {
         visibility: hidden;
@@ -155,7 +158,7 @@
     <div class="col-lg-4 col-sm-12 col-xs-12">
         <div class="card">
             <div class="card-body">
-                <form action="{{ route('generalsetting.update', Crypt::encrypt($setting->id)) }}" method="POST">
+                    <form action="{{ route('generalsetting.update', Crypt::encrypt($setting->id)) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     <x-input-with-icon-label label="Nama Perusahaan" name="nama_perusahaan" icon="ti ti-home" :value="$setting->nama_perusahaan ?? ''" />
@@ -198,6 +201,18 @@
                     </div>
                     <x-input-with-icon-label label="Cloud Id" name="cloud_id" icon="ti ti-cloud" :value="$setting->cloud_id ?? ''" />
                     <x-input-with-icon-label label="API Key" name="api_key" icon="ti ti-key" :value="$setting->api_key ?? ''" />
+                    <x-input-with-icon-label label="Domain (contoh: xyz.com)" name="domain_email" icon="ti ti-mail" :value="$setting->domain_email ?? ''" />
+                    <div class="form-group mb-3">
+                        <label for="logo" style="font-weight: 600" class="form-label">Logo Perusahaan</label>
+                        <input type="file" class="form-control" name="logo" id="logo">
+                        <div class="mt-2 text-center">
+                            @if ($setting->logo && Storage::exists('public/logo/' . $setting->logo))
+                                <img src="{{ asset('storage/logo/' . $setting->logo) }}" alt="Logo Perusahaan" style="max-width: 200px;">
+                            @else
+                                <img src="https://placehold.co/200x200?text=Logo+Perusahaan&font=roboto" alt="Logo Default" style="max-width: 200px;">
+                            @endif
+                        </div>
+                    </div>
                     <button class="btn btn-primary w-100" id="btnSimpan">
                         <i class="ti ti-refresh me-1"></i> Update
                     </button>

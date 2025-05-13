@@ -6,6 +6,8 @@ use App\Models\Pengaturanumum;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class GeneralsettingController extends Controller
 {
@@ -18,25 +20,55 @@ class GeneralsettingController extends Controller
     public function update(Request $request, $id)
     {
         $id = Crypt::decrypt($id);
-        $setting = Pengaturanumum::find($id);
-        if ($setting) {
-            $setting->update([
-                'nama_perusahaan' => $request->input('nama_perusahaan'),
-                'alamat' => $request->input('alamat'),
-                'telepon' => $request->input('telepon'),
-                'total_jam_bulan' => $request->input('total_jam_bulan'),
-                'denda' => $request->input('denda') == 'on',
-                'face_recognition' => $request->input('face_recognition') == 'on',
-                'periode_laporan_dari' => $request->input('periode_laporan_dari'),
-                'periode_laporan_sampai' => $request->input('periode_laporan_sampai'),
-                'periode_laporan_next_bulan' => $request->input('periode_laporan_next_bulan') == 'on',
-                'cloud_id' => $request->input('cloud_id'),
-                'api_key' => $request->input('api_key')
-            ]);
+        $request->validate([
+            'nama_perusahaan' => 'required',
+            'alamat' => 'required',
+            'telepon' => 'required',
+            'total_jam_bulan' => 'required',
+            'periode_laporan_dari' => 'required',
+            'periode_laporan_sampai' => 'required',
+            'domain_email' => 'required|regex:/^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]\.[a-zA-Z]{2,}$/',
+        ]);
 
-            return Redirect::back()->with(messageSuccess('Data Berhasil di Update'));
-        } else {
-            return Redirect::back()->with(messageError('Data Gagal di Update'));
+        try {
+            //dd($request->denda);
+            DB::beginTransaction();
+            $setting = Pengaturanumum::findOrFail($id);
+
+            $data = [
+                'nama_perusahaan' => $request->nama_perusahaan,
+                'alamat' => $request->alamat,
+                'telepon' => $request->telepon,
+                'total_jam_bulan' => $request->total_jam_bulan,
+                'denda' => $request->has('denda') ? true : false,
+                'face_recognition' => $request->has('face_recognition') ? true : false,
+                'periode_laporan_dari' => $request->periode_laporan_dari,
+                'periode_laporan_sampai' => $request->periode_laporan_sampai,
+                'periode_laporan_next_bulan' => $request->has('periode_laporan_next_bulan') ? true : false,
+                'cloud_id' => $request->cloud_id,
+                'api_key' => $request->api_key,
+                'domain_email' => $request->domain_email,
+            ];
+
+            if ($request->hasFile('logo')) {
+                $logo = $request->file('logo');
+                $logoName = time() . '.' . $logo->getClientOriginalExtension();
+                $logo->storeAs('public/logo', $logoName);
+
+                // Hapus logo lama jika ada
+                if ($setting->logo && Storage::exists('public/logo/' . $setting->logo)) {
+                    Storage::delete('public/logo/' . $setting->logo);
+                }
+
+                $data['logo'] = $logoName;
+            }
+
+            $setting->update($data);
+            DB::commit();
+            return Redirect::back()->with(messageSuccess('Data Berhasil Disimpan'));
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return Redirect::back()->with(messageError($e->getMessage()));
         }
     }
 }

@@ -12,7 +12,7 @@
 
 
         #header-section {
-            height: 180px;
+            height: auto;
             padding: 20px;
             position: relative;
         }
@@ -102,10 +102,7 @@
         }
 
         #app-section {
-
-            margin-top: 110px;
             padding: 20px;
-            position: relative;
         }
 
         #app-section #title {
@@ -141,9 +138,25 @@
                 <span id="user-role">({{ $karyawan->nama_dept }})</span>
 
             </div>
-            <div class="avatar">
-                <img src="{{ asset('assets/template/img/sample/avatar/avatar1.jpg') }}" alt="avatar" class="imaged w64 rounded">
-            </div>
+            <a href="{{ route('profile.index') }}">
+                @if (!empty($karyawan->foto))
+                    @if (Storage::disk('public')->exists('/karyawan/' . $karyawan->foto))
+                        <div
+                            style="width: 80px; height: 80px; background-image: url({{ getfotoKaryawan($karyawan->foto) }}); background-size: cover; background-position: center; border-radius: 50%;">
+
+
+                        </div>
+                    @else
+                        <div class="avatar avatar-xs me-2">
+                            <img src="{{ asset('assets/template/img/sample/avatar/avatar1.jpg') }}" alt="avatar" class="imaged w64 rounded">
+                        </div>
+                    @endif
+                @else
+                    <div class="avatar avatar-xs me-2">
+                        <img src="{{ asset('assets/template/img/sample/avatar/avatar1.jpg') }}" alt="avatar" class="imaged w64 rounded">
+                    </div>
+                @endif
+            </a>
         </div>
         <div id="section-jam " class="text-center mt-1 mb-2">
             <h2 id="jam" class="mb-2" style="text-shadow: 0px 0px 2px #04ab86b7; line-height: 1rem"></h2>
@@ -263,6 +276,21 @@
                         </span>
                     </div>
                 </div>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-3">
+                <a href="{{ route('karyawan.idcard', Crypt::encrypt($karyawan->nik)) }}">
+                    <div class="card">
+                        <div class="card-body text-center" style="padding: 5px 5px !important; line-height:0.8rem">
+                            <img src="{{ asset('assets/template/img/3d/card.webp') }}" alt="" style="width: 50px" class="mb-0">
+                            <br>
+                            <span style="font-size: 0.8rem; font-weight:500" class="mb-2">
+                                ID Card
+                            </span>
+                        </div>
+                    </div>
+                </a>
             </div>
         </div>
     </div>

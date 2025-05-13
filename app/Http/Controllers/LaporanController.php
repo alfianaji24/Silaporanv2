@@ -25,10 +25,10 @@ class LaporanController extends Controller
     {
 
 
-        $pengaturan_umum = Pengaturanumum::where('id', 1)->first();
-        $periode_laporan_dari = $pengaturan_umum->periode_laporan_dari;
-        $periode_laporan_sampai = $pengaturan_umum->periode_laporan_sampai;
-        $periode_laporan_lintas_bulan = $pengaturan_umum->periode_laporan_next_bulan;
+        $generalsetting = Pengaturanumum::where('id', 1)->first();
+        $periode_laporan_dari = $generalsetting->periode_laporan_dari;
+        $periode_laporan_sampai = $generalsetting->periode_laporan_sampai;
+        $periode_laporan_lintas_bulan = $generalsetting->periode_laporan_next_bulan;
 
 
         if ($request->periode_laporan == 1) {
@@ -44,7 +44,10 @@ class LaporanController extends Controller
                 $bulan = $request->bulan;
                 $tahun = $request->tahun;
             }
-            $periode_dari = $tahun . '-' . $bulan . '-' . $periode_laporan_dari;
+            // Menambahkan nol di depan bulan jika bulan kurang dari 10
+
+            $bulan = str_pad($bulan, 2, '0', STR_PAD_LEFT);
+            $periode_dari = $request->tahun . '-' . $bulan . '-01';
             $periode_sampai = $request->tahun . '-' . $request->bulan . '-' . $periode_laporan_sampai;
         } else {
             $periode_dari = $request->tahun . '-' . $request->bulan . '-01';
@@ -141,6 +144,7 @@ class LaporanController extends Controller
         $data['jmlhari'] = hitungJumlahHari($periode_dari, $periode_sampai) + 1;
         $data['denda_list'] = Denda::all()->toArray();
         $data['datalibur'] = getdatalibur($periode_dari, $periode_sampai);
+        $data['generalsetting'] = $generalsetting;
         if (isset($_POST['exportButton'])) {
             header("Content-type: application/vnd-ms-excel");
             // Mendefinisikan nama file ekspor "-SahabatEkspor.xls"

@@ -50,6 +50,7 @@
                                         <th>Username</th>
                                         <th>Email</th>
                                         <th>Role</th>
+                                        <th><i class="ti ti-link"></i></th>
                                         <th>#</th>
                                     </tr>
                                 </thead>
@@ -64,6 +65,13 @@
                                                 @foreach ($d->roles as $role)
                                                     {{ ucwords($role->name) }}
                                                 @endforeach
+                                            </td>
+                                             <td>
+                                                @if (!empty($d->nik))
+                                                    <i class="ti ti-link text-success"></i>
+                                                @else
+                                                    <i class="ti ti-link text-danger"></i>
+                                                @endif
                                             </td>
                                             <td>
                                                 <div class="d-flex">

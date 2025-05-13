@@ -8,6 +8,7 @@ use App\Models\Facerecognition;
 use App\Models\Jabatan;
 use App\Models\Jamkerja;
 use App\Models\Karyawan;
+use App\Models\Pengaturanumum;
 use App\Models\Setjamkerjabydate;
 use App\Models\Setjamkerjabyday;
 use App\Models\Statuskawin;
@@ -19,6 +20,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
+use App\Imports\KaryawanImport;
+use App\Exports\TemplateKaryawanExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class KaryawanController extends Controller
 {
@@ -259,9 +263,13 @@ class KaryawanController extends Controller
             ->join('status_kawin', 'karyawan.kode_status_kawin', '=', 'status_kawin.kode_status_kawin')
 
             ->first();
-
+        $user_karyawan = Userkaryawan::where('nik', $nik)->first();
+        $user = $user_karyawan ? User::where('id', $user_karyawan->id_user)->first() : null;
         $karyawan_wajah = Facerecognition::where('nik', $nik)->get();
-        return view('datamaster.karyawan.show', compact('karyawan', 'karyawan_wajah'));
+        $data['karyawan'] = $karyawan;
+        $data['user'] = $user;
+        $data['karyawan_wajah'] = $karyawan_wajah;
+        return view('datamaster.karyawan.show', $data);
     }
 
 
@@ -269,6 +277,28 @@ class KaryawanController extends Controller
     {
         $nik = Crypt::decrypt($nik);
         try {
+            $karyawan = Karyawan::where('nik', $nik)->first();
+            $user_karyawan = Userkaryawan::where('nik', $nik)->first();
+            if (!empty($user_karyawan)) {
+                User::where('id', $user_karyawan->id_user)->delete();
+                Userkaryawan::where('nik', $nik)->delete();
+            }
+            //$facerecognition = Facerecognition::where('nik', $nik)->get();
+            // foreach ($facerecognition as $fr) {
+            //     $nama_file = $facerecognition->wajah;
+            //     $nama_folder = $karyawan->nik . "-" . getNamaDepan(strtolower($karyawan->nama_karyawan));
+            //     $path = 'public/uploads/facerecognition/' . $nama_folder . "/" . $nama_file;
+            //     Storage::delete($path);
+            // }
+
+            $nama_folder = $karyawan->nik . "-" . getNamaDepan(strtolower($karyawan->nama_karyawan));
+            $path_folder = 'public/uploads/facerecognition/' . $nama_folder;
+            Storage::deleteDirectory($path_folder);
+
+
+            $nama_file_foto = $karyawan->foto;
+            $path_foto = '/public/karyawan/' . $nama_file_foto;
+            Storage::delete($path_foto);
             Karyawan::where('nik', $nik)->delete();
             return Redirect::back()->with(messageSuccess('Data Berhasil Dihapus'));
         } catch (\Exception $e) {
@@ -368,6 +398,7 @@ class KaryawanController extends Controller
 
     public function createuser($nik)
     {
+        $generalsetting = Pengaturanumum::first();
         $nik = Crypt::decrypt($nik);
         $karyawan = Karyawan::where('nik', $nik)->first();
         DB::beginTransaction();
@@ -377,7 +408,7 @@ class KaryawanController extends Controller
                 'name' => $karyawan->nama_karyawan,
                 'username' => $karyawan->nik,
                 'password' => Hash::make($karyawan->nik),
-                'email' => strtolower(removeTitik($karyawan->nik)) . '@puskesmasbalaraja.com',
+                'email' => strtolower(removeTitik($karyawan->nik)) . '@' . $generalsetting->domain_email,
             ]);
 
             Userkaryawan::create([
@@ -392,5 +423,59 @@ class KaryawanController extends Controller
             DB::rollBack();
             return Redirect::back()->with(messageError($e->getMessage()));
         }
+    }
+   public function deleteuser($nik)
+    {
+        $nik = Crypt::decrypt($nik);
+        try {
+            $user_karyawan = Userkaryawan::where('nik', $nik)->first();
+            User::where('id', $user_karyawan->id_user)->delete();
+            Userkaryawan::where('nik', $nik)->delete();
+            return Redirect::back()->with(messageSuccess('User Berhasil Dihapus'));
+        } catch (\Exception $e) {
+            return Redirect::back()->with(messageError('Data User gagal dihapus ' . $e->getMessage()));
+        }
+    }
+
+    public function import()
+    {
+        return view('datamaster.karyawan.import_modal');
+    }
+
+    public function download_template()
+    {
+        return Excel::download(new TemplateKaryawanExport, 'template_import_karyawan.xlsx');
+    }
+
+    public function import_proses(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls'
+        ]);
+
+        try {
+            $file = $request->file('file');
+            Excel::import(new KaryawanImport, $file);
+            return response()->json([
+                'success' => true,
+                'message' => 'Data berhasil diimport'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+    public function idcard($nik)
+    {
+        $nik = Crypt::decrypt($nik);
+        $karyawan = Karyawan::where('nik', $nik)
+            ->join('jabatan', 'karyawan.kode_jabatan', '=', 'jabatan.kode_jabatan')
+            ->first();
+        $data['karyawan'] = $karyawan;
+        $generalsetting = Pengaturanumum::where('id', 1)->first();
+        $data['generalsetting'] = $generalsetting;
+        return view('datamaster.karyawan.idcard', $data);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Userkaryawan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
@@ -22,6 +23,7 @@ class UserController extends Controller
                     $subQuery->where('role_id', $role_id);
                 });
             })
+            ->leftjoin('users_karyawan', 'users.id', '=', 'users_karyawan.id_user')
             ->paginate(10);
 
         $roles = Role::orderBy('name')->get();
@@ -115,6 +117,10 @@ class UserController extends Controller
         $id = Crypt::decrypt($id);
         try {
             User::where('id', $id)->delete();
+            $cek_user_karyawan = Userkaryawan::where('id_user', $id)->first();
+            if ($cek_user_karyawan) {
+                Userkaryawan::where('id_user', $id)->delete();
+            }
             return Redirect::back()->with(['success' => 'Data Berhasil Dihapus']);
         } catch (\Exception $e) {
             return Redirect::back()->with(['error' => $e->getMessage()]);

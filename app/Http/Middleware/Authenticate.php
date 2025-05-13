@@ -27,6 +27,6 @@ class Authenticate extends Middleware
             session()->flash('message', 'Sesi Anda telah berakhir. Silakan login kembali.');
         }
 
-        return route('login');
+        return route('loginuser');
     }
 }

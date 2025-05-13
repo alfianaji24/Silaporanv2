@@ -9,11 +9,29 @@
 </head>
 
 <body>
-    <div class="header">
-        <h4 class="title">
-            PRESENSI KARYAWAN <br>
-        </h4>
-        <h4>PERIODE : {{ DateToIndo(date('Y-m-d', strtotime($periode_dari))) }} - {{ DateToIndo(date('Y-m-d', strtotime($periode_sampai))) }}</h4>
+    <div class="header" style="margin-bottom: 10px">
+         <table>
+            <tr>
+                <td>
+                    @if ($generalsetting->logo && Storage::exists('public/logo/' . $generalsetting->logo))
+                        <img src="{{ asset('storage/logo/' . $generalsetting->logo) }}" alt="Logo Perusahaan" style="max-width: 100px;">
+                    @else
+                        <img src="https://placehold.co/100x100?text=Logo" alt="Logo Default" style="max-width: 100px;">
+                    @endif
+                </td>
+                <td>
+                    <h4 style="line-height: 20px; margin-bottom: 5px">
+                        LAPORAN PRESENSI
+                        <br>
+                        {{ $generalsetting->nama_perusahaan }}
+                        <br>
+                        PERIODE {{ date('d-m-Y', strtotime($periode_dari)) }} - {{ date('d-m-Y', strtotime($periode_sampai)) }}
+                    </h4>
+                    <span style="font-style: italic;">{{ $generalsetting->alamat }}</span><br>
+                    <span style="font-style: italic;">{{ $generalsetting->telepon }}</span>
+                </td>
+            </tr>
+        </table>
     </div>
     <div class="content">
         <table class="datatable3" style="width: 200%">
@@ -203,7 +221,7 @@
                                     $bgcolor = 'red';
                                     $textcolor = 'white';
                                     $ket = '';
-
+                                    //var_dump($ceklibur);
                                     if (!empty($ceklibur)) {
                                         $bgcolor = 'green';
                                         $textcolor = 'white';

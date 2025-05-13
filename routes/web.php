@@ -40,7 +40,7 @@ use Spatie\Permission\Models\Role;
 Route::middleware('guest')->group(function () {
     Route::get('/', function () {
         return view('auth.loginuser');
-    })->name('login');
+    })->name('loginuser');
 });
 
 // Route::get('/dashboard', function () {
@@ -48,17 +48,27 @@ Route::middleware('guest')->group(function () {
 // })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    // Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    // Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    // Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+
+    Route::controller(ProfileController::class)->group(function () {
+        Route::get('/profile', 'index')->name('profile.index');
+        Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    });
     //Setings
     //Role
+
+    Route::controller(ProfileController::class)->group(function () {
+        Route::get('/profile', 'index')->name('profile.index');
+        Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    });
 
     Route::controller(DashboardController::class)->group(function () {
         Route::get('/dashboard', 'index')->name('dashboard.index');
     });
-    Route::controller(RoleController::class)->group(function () {
+    Route::middleware('role:super admin')->controller(RoleController::class)->group(function () {
         Route::get('/roles', 'index')->name('roles.index');
         Route::get('/roles/create', 'create')->name('roles.create');
         Route::post('/roles', 'store')->name('roles.store');
@@ -70,7 +80,7 @@ Route::middleware('auth')->group(function () {
     });
 
 
-    Route::controller(Permission_groupController::class)->group(function () {
+    Route::middleware('role:super admin')->controller(Permission_groupController::class)->group(function () {
         Route::get('/permissiongroups', 'index')->name('permissiongroups.index');
         Route::get('/permissiongroups/create', 'create')->name('permissiongroups.create');
         Route::post('/permissiongroups', 'store')->name('permissiongroups.store');
@@ -80,7 +90,7 @@ Route::middleware('auth')->group(function () {
     });
 
 
-    Route::controller(PermissionController::class)->group(function () {
+    Route::middleware('role:super admin')->controller(PermissionController::class)->group(function () {
         Route::get('/permissions', 'index')->name('permissions.index');
         Route::get('/permissions/create', 'create')->name('permissions.create');
         Route::post('/permissions', 'store')->name('permissions.store');
@@ -89,7 +99,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('/permissions/{id}/delete', 'destroy')->name('permissions.delete');
     });
 
-    Route::controller(UserController::class)->group(function () {
+    Route::middleware('role:super admin')->controller(UserController::class)->group(function () {
         Route::get('/users', 'index')->name('users.index');
         Route::get('/users/create', 'create')->name('users.create');
         Route::post('/users', 'store')->name('users.store');
@@ -107,20 +117,25 @@ Route::middleware('auth')->group(function () {
         Route::get('/karyawan', 'index')->name('karyawan.index')->can('karyawan.index');
         Route::get('/karyawan/create', 'create')->name('karyawan.create')->can('karyawan.create');
         Route::post('/karyawan', 'store')->name('karyawan.store')->can('karyawan.create');
-        Route::get('/karyawan/{nik}', 'edit')->name('karyawan.edit')->can('karyawan.edit');
-        Route::get('/karyawan/{nik}/show', 'show')->name('karyawan.show')->can('karyawan.show');
-        Route::get('/karyawan/{nik}/lockunlocklocation', 'lockunlocklocation')->name('karyawan.lockunlocklocation')->can('karyawan.lockunlocklocation');
-        Route::get('/karyawan/{nik}/lockunlockjamkerja', 'lockunlockjamkerja')->name('karyawan.lockunlockjamkerja')->can('karyawan.lockunlockjamkerja');
+        Route::get('/karyawan/import', 'import')->name('karyawan.import')->can('karyawan.create');
+        Route::get('/karyawan/download-template', 'download_template')->name('karyawan.download_template')->can('karyawan.create');
+        Route::post('/karyawan/import', 'import_proses')->name('karyawan.import_proses')->can('karyawan.create');
+        Route::get('/karyawan/{nik}/edit', 'edit')->name('karyawan.edit')->can('karyawan.edit');
         Route::put('/karyawan/{nik}', 'update')->name('karyawan.update')->can('karyawan.edit');
-        Route::delete('/karyawan/{nik}/delete', 'destroy')->name('karyawan.delete');
+        Route::delete('/karyawan/{nik}', 'destroy')->name('karyawan.delete')->can('karyawan.delete');
+        Route::get('/karyawan/{nik}/show', 'show')->name('karyawan.show')->can('karyawan.show');
         Route::get('/karyawan/{nik}/setjamkerja', 'setjamkerja')->name('karyawan.setjamkerja')->can('karyawan.setjamkerja');
         Route::post('/karyawan/{nik}/storejamkerjabyday', 'storejamkerjabyday')->name('karyawan.storejamkerjabyday')->can('karyawan.setjamkerja');
         Route::post('/karyawan/storejamkerjabydate', 'storejamkerjabydate')->name('karyawan.storejamkerjabydate')->can('karyawan.setjamkerja');
 
         Route::post('/karyawan/getjamkerjabydate', 'getjamkerjabydate')->name('karyawan.getjamkerjabydate')->can('karyawan.setjamkerja');
-        Route::post('/karyawa/deletejamkerjabydate', 'deletejamkerjabydate')->name('karyawan.deletejamkerjabydate')->can('karyawan.setjamkerja');
+        Route::post('/karyawan/deletejamkerjabydate', 'deletejamkerjabydate')->name('karyawan.deletejamkerjabydate')->can('karyawan.setjamkerja');
 
         Route::get('/karyawan/{nik}/createuser', 'createuser')->name('karyawan.createuser')->can('users.create');
+        Route::get('/karyawan/{nik}/deleteuser', 'deleteuser')->name('karyawan.deleteuser')->can('users.create');
+        Route::get('/karyawan/{nik}/lockunlocklocation', 'lockunlocklocation')->name('karyawan.lockunlocklocation')->can('karyawan.edit');
+        Route::get('/karyawan/{nik}/lockunlockjamkerja', 'lockunlockjamkerja')->name('karyawan.lockunlockjamkerja')->can('karyawan.edit');
+        Route::get('/karyawan/{nik}/idcard', 'idcard')->name('karyawan.idcard');
     });
 
     Route::controller(DepartemenController::class)->group(function () {
@@ -139,6 +154,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/jabatan/{kode_jabatan}', 'edit')->name('jabatan.edit')->can('jabatan.edit');
         Route::put('/jabatan/{kode_jabatan}', 'update')->name('jabatan.update')->can('jabatan.edit');
         Route::delete('/jabatan/{kode_jabatan}/delete', 'destroy')->name('jabatan.delete')->can('jabatan.delete');
+        
     });
 
 
