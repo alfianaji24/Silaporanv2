@@ -2,134 +2,130 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>LOGIN | Silaporan Puskesmas Balaraja</title>
-    <link rel="stylesheet" href="{{ asset('assets/login/css/style.css') }}" />
-    <style>
-        .alert {
-            padding: 15px;
-            margin-bottom: 20px;
-            border: 1px solid transparent;
-            border-radius: 4px;
-            animation: slideIn 0.5s ease-out;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LOGIN | Silaporan Puskesmas Balaraja</title>
 
-        .alert-danger {
-            color: #721c24;
-            background-color: #f8d7da;
-            border-color: #f5c6cb;
-        }
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
 
-        @keyframes slideIn {
-            from {
-                transform: translateY(-20px);
-                opacity: 0;
-            }
-
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
+  <!-- Optional custom config -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#1e40af',
+          }
         }
-    </style>
+      }
+    }
+  </script>
 </head>
 
-<body>
-    <main>
-        <div class="box">
-            <div class="inner-box">
-                <div class="forms-wrap">
-                    <form id="formAuthentication" class="mb-3" action="{{ route('login') }}" method="POST">
-                        @csrf
-                        <div class="logo">
-                            <img src="{{ asset('assets/login/images/logoweb-1.png') }}" alt="easyclass" />
-                            <h4>SILAPORAN</h4>
-                        </div>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+  <main class="w-full max-w-5xl bg-white shadow-md rounded-lg flex flex-col md:flex-row overflow-hidden">
 
-                        <div class="heading">
-                            <h2>Welcome Back</h2>
-                        </div>
+    <!-- Form Section -->
+    <div class="w-full md:w-1/2 p-8">
+      <div class="flex flex-col items-center mb-6">
+        <img src="{{ asset('assets/img/logo/logo_silaporan.png') }}" alt="Logo" class="w-20 h-20 mb-2">
+        <h4 class="text-xl font-semibold text-gray-700">SILAPORAN</h4>
+      </div>
 
-                        @if (session('error'))
-                            <div class="alert alert-danger">
-                                {{ session('error') }}
-                            </div>
-                        @endif
+      <h2 class="text-2xl font-bold text-center text-gray-800 mb-4">Welcome Back</h2>
 
-                        @if ($errors->any())
-                            <div class="alert alert-danger">
-                                @foreach ($errors->all() as $error)
-                                    {{ $error }}<br>
-                                @endforeach
-                            </div>
-                        @endif
-
-                        <div class="actual-form">
-                            <div class="input-wrap">
-                                <input type="text" minlength="4"
-                                    class="input-field @error('id_user') is-invalid @enderror" name="id_user"
-                                    value="{{ old('id_user') }}" autocomplete="off" placeholder="Username / Email"
-                                    required />
-                                {{-- @error('id_user')
-                                    <span class="invalid-feedback">{{ $message }}</span>
-                                @enderror --}}
-                            </div>
-
-                            <div class="input-wrap">
-                                <input type="password" minlength="4" name="password"
-                                    class="input-field @error('password') is-invalid @enderror" autocomplete="off"
-                                    placeholder="Password" required />
-                                {{-- @error('password')
-                                    <span class="invalid-feedback">{{ $message }}</span>
-                                @enderror --}}
-                            </div>
-                            <div class="checkbox-wrap">
-                                <input type="checkbox" id="remember" name="remember" style="margin-right: 8px; width: 16px; height: 16px;">
-                                <label for="remember" style="color: #666; font-size: 14px; cursor: pointer; margin-left: 20px;">Remember Me</label>
-                            </div>
-
-                            <input type="submit" value="Sign In" class="sign-btn" />
-
-                            <p class="text">
-                                Forgotten your password or you login datails?
-                                <a href="#">Get help</a> signing in
-                            </p>
-                        </div>
-                    </form>
-
-                </div>
-
-                <div class="carousel">
-                    <div class="images-wrapper">
-                        <img src="./img/image1.png" class="image img-1 show" alt="" />
-                        <img src="./img/image2.png" class="image img-2" alt="" />
-                        <img src="./img/image3.png" class="image img-3" alt="" />
-                    </div>
-
-                    <div class="text-slider">
-                        <div class="text-wrap">
-                            <div class="text-group">
-                                <h2>Presensi Mudah, Kerja Lancar!</h2>
-                                <h2>Absen Cepat, Produktivitas Meningkat!</h2>
-                                <h2>Hadir Tanpa Ribet, Kinerja Lebih Hebat!</h2>
-                            </div>
-                        </div>
-
-                        <div class="bullets">
-                            <span class="active" data-value="1"></span>
-                            <span data-value="2"></span>
-                            <span data-value="3"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+      @if (session('error'))
+        <div class="bg-red-100 border border-red-400 text-red-700 p-3 rounded mb-4">
+          {{ session('error') }}
         </div>
-    </main>
+      @endif
 
-    <!-- Javascript file -->
-    <script src="{{ asset('assets/login/script/app.js') }}"></script>
+      @if ($errors->any())
+        <div class="bg-red-100 border border-red-400 text-red-700 p-3 rounded mb-4">
+          @foreach ($errors->all() as $error)
+            <p>{{ $error }}</p>
+          @endforeach
+        </div>
+      @endif
+
+      <form action="{{ route('login') }}" method="POST" class="space-y-4">
+        @csrf
+        <input type="text" name="id_user" placeholder="Username / Email" value="{{ old('id_user') }}"
+          class="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-primary"
+          required minlength="4" />
+
+        <input type="password" name="password" placeholder="Password"
+          class="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-primary"
+          required minlength="4" />
+
+        <div class="flex items-center text-sm text-gray-600">
+          <input type="checkbox" name="remember" id="remember" class="mr-2 h-4 w-4">
+          <label for="remember" class="cursor-pointer">Remember Me</label>
+        </div>
+
+        <button type="submit"
+          class="w-full bg-primary text-white py-2 rounded hover:bg-blue-700 transition">Sign In</button>
+
+          <div class="mt-6">
+  <a href="{{ route('google.login') }}"
+    class="flex items-center justify-center bg-red-500 text-white py-2 rounded hover:bg-red-600 transition">
+    <svg class="w-5 h-5 mr-2" viewBox="0 0 48 48"><path fill="#fff" d="M44.5 20H24v8.5h11.8C33.2 33.4 29 36.5 24 36.5c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.1 0 5.9 1.1 8.1 3l6-6C34.5 3.8 29.6 2 24 2 12.4 2 3.5 10.9 3.5 22.5S12.4 43 24 43c11.3 0 20.5-9.2 20.5-20.5 0-1.5-.2-2.9-.5-4.5z"/></svg>
+    Sign in with Google
+  </a>
+</div>
+
+        <p class="text-center text-sm text-gray-600">
+          Forgot your password or login details?
+          <a href="#" class="text-primary hover:underline">Get help</a> signing in.
+        </p>
+      </form>
+
+    </div>
+
+    <!-- Image Slider Section -->
+    <div class="w-full md:w-1/2 relative">
+      <div class="relative w-full h-64 md:h-full overflow-hidden">
+        <div id="slider" class="flex transition-transform duration-500 h-full">
+          <img src="{{ asset('assets/login/slider/image1.png') }}" class="w-full object-cover" alt="Slide 1">
+          <img src="{{ asset('assets/login/slider/image2.png') }}" class="w-full object-cover" alt="Slide 2">
+          <img src="{{ asset('assets/login/slider/image3.png') }}" class="w-full object-cover" alt="Slide 3">
+        </div>
+      </div>
+
+      <!-- Bullets -->
+      <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
+        <span class="bullet w-3 h-3 bg-white rounded-full opacity-70 cursor-pointer" data-index="0"></span>
+        <span class="bullet w-3 h-3 bg-white rounded-full opacity-70 cursor-pointer" data-index="1"></span>
+        <span class="bullet w-3 h-3 bg-white rounded-full opacity-70 cursor-pointer" data-index="2"></span>
+      </div>
+    </div>
+  </main>
+
+  <!-- Slider Script -->
+  <script>
+    const slider = document.getElementById('slider');
+    const bullets = document.querySelectorAll('.bullet');
+    let index = 0;
+
+    function showSlide(i) {
+      slider.style.transform = `translateX(-${i * 100}%)`;
+      bullets.forEach(b => b.classList.remove('bg-primary', 'opacity-100'));
+      bullets[i].classList.add('bg-primary', 'opacity-100');
+    }
+
+    bullets.forEach((b, i) => {
+      b.addEventListener('click', () => {
+        index = i;
+        showSlide(index);
+      });
+    });
+
+    setInterval(() => {
+      index = (index + 1) % bullets.length;
+      showSlide(index);
+    }, 4000);
+  </script>
 </body>
 
 </html>

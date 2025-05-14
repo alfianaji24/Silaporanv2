@@ -4,11 +4,11 @@
      <div class="app-brand demo">
          <a href="index.html" class="app-brand-link">
              <span class="app-brand-logo demo">
-                 <i class="ti ti-fingerprint" style="font-size:32px !important"></i>
-                 {{-- <img src="{{ asset('assets/img/logo/hibah.png') }}" alt="" width="64"> --}}
+                 <!-- <i class="ti ti-fingerprint" style="font-size:32px !important"></i> -->
+                 <img src="{{ asset('assets/img/logo/logo_silaporan.png') }}" alt="" width="32">
              </span>
              <span class="app-brand-text demo menu-text fw-bold"><i><b>S</b></i>ilaporan</span>
-         </a>
+         </a> 
 
          <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
              <i class="ti menu-toggle-icon d-none d-xl-block ti-sm align-middle"></i>
