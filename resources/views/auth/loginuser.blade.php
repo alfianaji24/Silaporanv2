@@ -21,9 +21,79 @@
       }
     }
   </script>
+
+  <style>
+    .animated-background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background: #1e40af;
+      overflow: hidden;
+    }
+
+    .wave {
+      position: absolute;
+      width: 200%;
+      height: 200%;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 40%;
+      transform-origin: 50% 48%;
+      animation: wave 12s infinite linear;
+    }
+
+    .wave:nth-child(2) {
+      background: rgba(255, 255, 255, 0.15);
+      animation: wave 16s infinite linear;
+    }
+
+    .wave:nth-child(3) {
+      background: rgba(255, 255, 255, 0.05);
+      animation: wave 20s infinite linear;
+    }
+
+    .floating-particles {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at center, rgba(255,255,255,0.1) 2px, transparent 3px);
+      background-size: 50px 50px;
+      animation: float 8s infinite linear;
+    }
+
+    @keyframes wave {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-20px);
+      }
+      100% {
+        transform: translateY(0);
+      }
+    }
+  </style>
 </head>
 
 <body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+  <div class="animated-background">
+    <div class="wave"></div>
+    <div class="wave"></div>
+    <div class="wave"></div>
+    <div class="floating-particles"></div>
+  </div>
+
   <main class="w-full max-w-5xl bg-white shadow-md rounded-lg flex flex-col md:flex-row overflow-hidden">
 
     <!-- Form Section -->
@@ -64,23 +134,17 @@
           <label for="remember" class="cursor-pointer">Remember Me</label>
         </div>
 
-        <button type="submit"
-          class="w-full bg-primary text-white py-2 rounded hover:bg-blue-700 transition">Sign In</button>
-
-          <div class="mt-6">
-  <a href="{{ route('google.login') }}"
-    class="flex items-center justify-center bg-red-500 text-white py-2 rounded hover:bg-red-600 transition">
-    <svg class="w-5 h-5 mr-2" viewBox="0 0 48 48"><path fill="#fff" d="M44.5 20H24v8.5h11.8C33.2 33.4 29 36.5 24 36.5c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.1 0 5.9 1.1 8.1 3l6-6C34.5 3.8 29.6 2 24 2 12.4 2 3.5 10.9 3.5 22.5S12.4 43 24 43c11.3 0 20.5-9.2 20.5-20.5 0-1.5-.2-2.9-.5-4.5z"/></svg>
-    Sign in with Google
-  </a>
-</div>
-
+        <button type="submit"class="w-full bg-primary text-white py-2 rounded hover:bg-blue-700 transition">Sign In</button>
+        <div class="mt-6">
+            <a href="{{ route('google.login') }}" class="flex items-center justify-center bg-red-500 text-white py-2 rounded hover:bg-red-600 transition">
+            <svg class="w-5 h-5 mr-2" viewBox="0 0 48 48"><path fill="#fff" d="M44.5 20H24v8.5h11.8C33.2 33.4 29 36.5 24 36.5c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.1 0 5.9 1.1 8.1 3l6-6C34.5 3.8 29.6 2 24 2 12.4 2 3.5 10.9 3.5 22.5S12.4 43 24 43c11.3 0 20.5-9.2 20.5-20.5 0-1.5-.2-2.9-.5-4.5z"/></svg>
+            Sign in with Google</a>
+        </div>
         <p class="text-center text-sm text-gray-600">
           Forgot your password or login details?
-          <a href="#" class="text-primary hover:underline">Get help</a> signing in.
+          <a href="" class="text-primary hover:underline">Get help</a> signing in.
         </p>
       </form>
-
     </div>
 
     <!-- Image Slider Section -->
