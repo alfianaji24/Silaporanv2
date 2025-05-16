@@ -14,16 +14,30 @@ use App\Models\Pengaturanumum;
 use App\Models\Presensi;
 use App\Models\Setjamkerjabydate;
 use App\Models\Setjamkerjabyday;
-use App\Models\Setjamkerjabydept;
 use App\Models\User;
 use App\Models\Userkaryawan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Http;
 
 class PresensiController extends Controller
 {
+
+    private function sendWANotification($phone, $message) {
+        $token = "TcV9zJ3511d67dsj5JLy"; // Replace with your Fonnte token
+        $url = "https://api.fonnte.com/send";
+
+        $response = Http::withHeaders([
+            'Authorization' => $token
+        ])->post($url, [
+            'target' => $phone,
+            'message' => $message
+        ]);
+
+        return $response->successful();
+    }
 
     public function index(Request $request)
     {
@@ -90,7 +104,6 @@ class PresensiController extends Controller
     public function create($kode_jam_kerja = null)
     {
 
-        //Get Data Karyawan By User
         //Get Data Karyawan By User
         $user = User::where('id', auth()->user()->id)->first();
         $userkaryawan = Userkaryawan::where('id_user', $user->id)->first();
@@ -186,8 +199,6 @@ class PresensiController extends Controller
         $lokasi = $request->lokasi;
         $kode_jam_kerja = $request->kode_jam_kerja;
 
-
-
         $tanggal_sekarang = date("Y-m-d");
         $jam_sekarang = date("H:i");
 
@@ -215,14 +226,11 @@ class PresensiController extends Controller
         $cabang = Cabang::where('kode_cabang', $karyawan->kode_cabang)->first();
         $lokasi_kantor = $cabang->lokasi_cabang;
 
-
-
         $koordinat_kantor = explode(",", $lokasi_kantor);
         $latitude_kantor = $koordinat_kantor[0];
         $longitude_kantor = $koordinat_kantor[1];
 
         $jarak = hitungjarak($latitude_kantor, $longitude_kantor, $latitude_user, $longitude_user);
-
 
         $radius = round($jarak["meters"]);
 
@@ -241,8 +249,6 @@ class PresensiController extends Controller
 
         $jam_presensi = $tanggal_sekarang . " " . $jam_sekarang;
 
-
-
         $jam_masuk = $tanggal_presensi . " " . date('H:i', strtotime($jam_kerja->jam_masuk));
         //Jam Mulai Absen adalah 60 Menit Sebelum Jam Masuk
         $jam_mulai_masuk = $tanggal_presensi . " " . date('H:i', strtotime('-60 minutes', strtotime($jam_masuk)));
@@ -252,13 +258,10 @@ class PresensiController extends Controller
 
         $jam_pulang = $tanggal_pulang . " " . $jam_kerja->jam_pulang;
 
-
-        //dd($jam_presensi . " " . $jam_mulai_pulang);
-        //Cek Radius
-        //dd($jam_presensi . " " . $jam_mulai_masuk);
         $presensi_hariini = Presensi::where('nik', $karyawan->nik)
             ->where('tanggal', $tanggal_presensi)
             ->first();
+
         if ($status_lock_location == 1 && $radius > $cabang->radius_cabang) {
             return response()->json(['status' => false, 'message' => 'Anda Berada Di Luar Radius Kantor, Jarak Anda ' . formatAngka($radius) . ' Meters Dari Kantor', 'notifikasi' => 'notifikasi_radius'], 400);
         } else {
@@ -293,6 +296,12 @@ class PresensiController extends Controller
                             Storage::put($file, $image_base64);
                         }
 
+                        // Send WA notification for check-in
+                        $message = "✅ *Presensi Masuk Berhasil*\n\n";
+                        $message .= "Nama: " . $karyawan->nama_karyawan . "\n";
+                        $message .= "Waktu: " . date('d/m/Y H:i', strtotime($jam_presensi));
+
+                        $this->sendWANotification($karyawan->no_hp, $message);
 
                         return response()->json(['status' => true, 'message' => 'Berhasil Absen Masuk', 'notifikasi' => 'notifikasi_absenmasuk'], 200);
                     } catch (\Exception $e) {
@@ -328,6 +337,12 @@ class PresensiController extends Controller
                             Storage::put($file, $image_base64);
                         }
 
+                        // Send WA notification for check-out
+                        $message = "✅ *Presensi Pulang Berhasil*\n\n";
+                        $message .= "Nama: " . $karyawan->nama_karyawan . "\n";
+                        $message .= "Waktu: " . date('d/m/Y H:i', strtotime($jam_presensi));
+
+                        $this->sendWANotification($karyawan->no_hp, $message);
 
                         return response()->json(['status' => true, 'message' => 'Berhasil Absen Pulang', 'notifikasi' => 'notifikasi_absenpulang'], 200);
                     } catch (\Exception $e) {
@@ -408,21 +423,12 @@ class PresensiController extends Controller
         $lokasi = explode(',', $cabang->lokasi_cabang);
         $data['latitude'] = $lokasi[0];
         $data['longitude'] = $lokasi[1];
-        // if (!empty($presensi->lokasi_cabang)) {
-        //     $lokasi = explode(',', $presensi->lokasi_cabang);
-        //     $data['latitude'] = $lokasi[0];
-        //     $data['longitude'] = $lokasi[1];
-        // } else {
-        //     $data['latitude'] = $cabang->latitude_cabang;
-        //     $data['longitude'] = $cabang->longitude_cabang;
-        // }
         $data['presensi'] = $presensi;
         $data['status'] = $status;
         $data['cabang'] = $cabang;
 
         return view('presensi.show', $data);
     }
-
 
     public function getdatamesin(Request $request)
     {
@@ -617,6 +623,7 @@ class PresensiController extends Controller
             }
         }
     }
+
 
 
 }
