@@ -25,20 +25,6 @@ use Illuminate\Support\Facades\Http;
 class PresensiController extends Controller
 {
 
-    private function sendWANotification($phone, $message) {
-        $token = "TcV9zJ3511d67dsj5JLy"; // Replace with your Fonnte token
-        $url = "https://api.fonnte.com/send";
-
-        $response = Http::withHeaders([
-            'Authorization' => $token
-        ])->post($url, [
-            'target' => $phone,
-            'message' => $message
-        ]);
-
-        return $response->successful();
-    }
-
     public function index(Request $request)
     {
 
@@ -296,13 +282,6 @@ class PresensiController extends Controller
                             Storage::put($file, $image_base64);
                         }
 
-                        // Send WA notification for check-in
-                        $message = "✅ *Presensi Masuk Berhasil*\n\n";
-                        $message .= "Nama: " . $karyawan->nama_karyawan . "\n";
-                        $message .= "Waktu: " . date('d/m/Y H:i', strtotime($jam_presensi));
-
-                        $this->sendWANotification($karyawan->no_hp, $message);
-
                         return response()->json(['status' => true, 'message' => 'Berhasil Absen Masuk', 'notifikasi' => 'notifikasi_absenmasuk'], 200);
                     } catch (\Exception $e) {
                         return response()->json(['status' => false, 'message' => $e->getMessage()], 400);
@@ -336,13 +315,6 @@ class PresensiController extends Controller
                             ]);
                             Storage::put($file, $image_base64);
                         }
-
-                        // Send WA notification for check-out
-                        $message = "✅ *Presensi Pulang Berhasil*\n\n";
-                        $message .= "Nama: " . $karyawan->nama_karyawan . "\n";
-                        $message .= "Waktu: " . date('d/m/Y H:i', strtotime($jam_presensi));
-
-                        $this->sendWANotification($karyawan->no_hp, $message);
 
                         return response()->json(['status' => true, 'message' => 'Berhasil Absen Pulang', 'notifikasi' => 'notifikasi_absenpulang'], 200);
                     } catch (\Exception $e) {
