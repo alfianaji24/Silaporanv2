@@ -25,6 +25,8 @@
                         <br>
                         {{ $generalsetting->nama_perusahaan }}
                         <br>
+                        PUSKESMAS BALARAJA
+                        <br>
                         PERIODE {{ date('d-m-Y', strtotime($periode_dari)) }} - {{ date('d-m-Y', strtotime($periode_sampai)) }}
                     </h4>
                     <span style="font-style: italic;">{{ $generalsetting->alamat }}</span><br>

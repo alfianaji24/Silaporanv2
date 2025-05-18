@@ -73,10 +73,16 @@
 <script src="{{ asset('assets/js/jquery.mask.min.js') }}"></script>
 <script src="{{ asset('assets/vendor/libs/flatpickr/flatpickr.js') }}"></script>
 
-<!-- <script>
+<script>
     $(function() {
+        // Initialize flatpickr for all date fields
+        $(".flatpickr-date").flatpickr({
+            dateFormat: "Y-m-d",
+            allowInput: true,
+            monthSelectorType: 'static'
+        });
 
-        $(".flatpickr-date").flatpickr();
-        $('#nik').mask('00.00.000');
+        // // Initialize mask for NIK
+        // $('#nik').mask('00.00.000');
     });
-</script> -->
+</script>

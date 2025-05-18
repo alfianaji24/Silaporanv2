@@ -85,6 +85,17 @@ class DashboardController extends Controller
             ->orderByRaw('DATE_FORMAT(tanggal_lahir, "%m-%d")')
             ->paginate(5);
 
+            // Get today's attendance statistics
+            $data['presensi_hari_ini'] = Presensi::join('presensi_jamkerja', 'presensi.kode_jam_kerja', '=', 'presensi_jamkerja.kode_jam_kerja')
+                ->where('presensi.tanggal', $hari_ini)
+                ->select(
+                    DB::raw("COUNT(CASE WHEN presensi.jam_in <= presensi_jamkerja.jam_masuk AND presensi.jam_out >= presensi_jamkerja.jam_pulang THEN 1 END) as tepat_waktu"),
+                    DB::raw("COUNT(CASE WHEN presensi.jam_in > presensi_jamkerja.jam_masuk THEN 1 END) as terlambat"),
+                    DB::raw("COUNT(CASE WHEN presensi.jam_out < presensi_jamkerja.jam_pulang THEN 1 END) as pulang_cepat"),
+                    DB::raw("(SELECT COUNT(*) FROM karyawan WHERE status_aktif_karyawan = 1) - COUNT(presensi.id) as tidak_absen")
+                )
+                ->first();
+
             return view('dashboard.dashboard', $data);
         }
     }

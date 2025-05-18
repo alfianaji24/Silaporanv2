@@ -48,6 +48,14 @@ class KaryawanController extends Controller
         if (!empty($request->nama_karyawan)) {
             $query->where('nama_karyawan', 'like', '%' . $request->nama_karyawan . '%');
         }
+
+        // Always filter by active status by default unless explicitly set to inactive
+        if ($request->status_aktif === '0') {
+            $query->where('karyawan.status_aktif_karyawan', '0');
+        } else {
+            $query->where('karyawan.status_aktif_karyawan', '1');
+        }
+
         $query->orderBy('nama_karyawan', 'asc');
         $karyawan = $query->paginate(15);
 

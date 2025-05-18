@@ -26,8 +26,8 @@
                     </div>
                     <div class="form-group mb-3">
                         <select name="periode_laporan" id="periode_laporan" class="form-select">
-                            <option value="">Periode Laporan</option>
-                            <option value="1" selected>Periode Gaji</option>
+                            <option value=""selected>Periode Laporan</option>
+                            <option value="1">Periode Gaji</option>
                             <option value="2">Bulan Berjalan</option>
                         </select>
                     </div>

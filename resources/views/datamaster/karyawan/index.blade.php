@@ -24,6 +24,14 @@
                                     <x-input-with-icon label="Cari Nama Karyawan" value="{{ Request('nama_karyawan') }}" name="nama_karyawan"
                                         icon="ti ti-search" />
                                 </div>
+                                <div class="col-lg-2 col-sm-12 col-md-12">
+                                    <div class="form-group">
+                                        <select name="status_aktif" id="status_aktif" class="form-select">
+                                            <option value="1" {{ Request('status_aktif') == '0' ? '' : 'selected' }}>Aktif</option>
+                                            <option value="0" {{ Request('status_aktif') == '0' ? 'selected' : '' }}>Non Aktif</option>
+                                        </select>
+                                    </div>
+                                </div>
                                 <!-- <div class="col-lg-2 col-sm-12 col-md-12">
                                     <x-select label="Cabang" name="kode_cabang" :data="$cabang" key="kode_cabang" textShow="nama_cabang"
                                         selected="{{ Request('kode_cabang') }}" />
@@ -58,7 +66,7 @@
                                         <th class="text-center"><i class="ti ti-clock-hour-3"></i></th>
                                         <th class="text-center"><i class="ti ti-fingerprint"></i></th>
                                         <th>Foto</th>
-                                        <th>#</th>
+                                        <th>Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>

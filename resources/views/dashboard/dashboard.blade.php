@@ -4,7 +4,7 @@
 @section('navigasi')
     <span>Dashboard</span> | <span id="datetime"></span>
 @endsection
-<!-- <div class="row">
+<div class="row">
     <div class="col-lg-12 col-sm-12 col-xs-12">
         <div class="card mb-6">
             <div class="card-widget-separator-wrapper">
@@ -14,7 +14,7 @@
                             <div class="d-flex justify-content-between align-items-start card-widget-1 border-end pb-4 pb-sm-0">
                                 <div>
                                     <p class="mb-1">Presensi Tepat Waktu</p>
-                                    <h4 class="mb-1">#</h4>
+                                    <h4 class="mb-1">{{ $presensi_hari_ini->tepat_waktu }}</h4>
                                 </div>
                                 <img src="{{ asset('assets/img/illustrations/tepat_waktu.png') }}" height="70" alt="view sales" class="me-3">
                             </div>
@@ -23,7 +23,7 @@
                             <div class="d-flex justify-content-between align-items-start card-widget-2 border-end pb-4 pb-sm-0">
                                 <div>
                                     <p class="mb-1">Terlambat Masuk</p>
-                                    <h4 class="mb-1">#</h4>
+                                    <h4 class="mb-1">{{ $presensi_hari_ini->terlambat }}</h4>
                                 </div>
                                 <img src="{{ asset('assets/img/illustrations/terlambat.png') }}" height="70" alt="view sales" class="me-3">
                             </div>
@@ -32,7 +32,7 @@
                             <div class="d-flex justify-content-between align-items-start border-end pb-4 pb-sm-0 card-widget-3">
                                 <div>
                                     <p class="mb-1">Pulang Cepat</p>
-                                    <h4 class="mb-1">#</h4>
+                                    <h4 class="mb-1">{{ $presensi_hari_ini->pulang_cepat }}</h4>
                                 </div>
                                 <img src="{{ asset('assets/img/illustrations/pulang_awal.png') }}" height="70" alt="view sales" class="me-3">
                             </div>
@@ -41,7 +41,7 @@
                             <div class="d-flex justify-content-between align-items-start">
                                 <div>
                                     <p class="mb-1">Tidak Absen</p>
-                                    <h4 class="mb-1">#</h4>
+                                    <h4 class="mb-1">{{ $presensi_hari_ini->tidak_absen }}</h4>
                                 </div>
                                 <img src="{{ asset('assets/img/illustrations/tidak_absen.png') }}" height="70" alt="view sales" class="me-3">
                             </div>
@@ -51,7 +51,7 @@
             </div>
         </div>
     </div>
-</div> -->
+</div>
 <div class="row mt-3">
     <div class="col-lg-12 col-sm-12 col-xs-12">
         <div class="card mb-6">
