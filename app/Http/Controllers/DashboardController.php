@@ -71,6 +71,20 @@ class DashboardController extends Controller
             $data['chart'] = $chart->build();
             $data['jkchart'] = $jkchart->build();
             $data['pddchart'] = $pddchart->build();
+
+            // Get ulang tahun karyawan - 10 terdekat
+            $data['ulang_tahun'] = Karyawan::select([
+                'nama_karyawan',
+                'tanggal_lahir',
+                DB::raw('TIMESTAMPDIFF(YEAR, tanggal_lahir, CURDATE()) as umur'),
+                DB::raw('DATE_FORMAT(tanggal_lahir, "%m-%d") as birth_date'),
+                DB::raw('DATE_FORMAT(CURDATE(), "%m-%d") as today_date')
+            ])
+            ->where('status_aktif_karyawan', 1)
+            ->whereRaw('DATE_FORMAT(tanggal_lahir, "%m-%d") >= DATE_FORMAT(CURDATE(), "%m-%d")')
+            ->orderByRaw('DATE_FORMAT(tanggal_lahir, "%m-%d")')
+            ->paginate(5);
+
             return view('dashboard.dashboard', $data);
         }
     }

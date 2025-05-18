@@ -1,6 +1,5 @@
 @extends('layouts.app')
 @section('titlepage', 'Karyawan')
-
 @section('content')
 @section('navigasi')
     <span>Karyawan</span>

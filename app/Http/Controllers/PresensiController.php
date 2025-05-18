@@ -27,7 +27,6 @@ class PresensiController extends Controller
 
     public function index(Request $request)
     {
-
         $tanggal = !empty($request->tanggal) ? $request->tanggal : date('Y-m-d');
         $presensi = Presensi::join('presensi_jamkerja', 'presensi.kode_jam_kerja', '=', 'presensi_jamkerja.kode_jam_kerja')
             ->select(
@@ -89,7 +88,6 @@ class PresensiController extends Controller
     }
     public function create($kode_jam_kerja = null)
     {
-
         //Get Data Karyawan By User
         $user = User::where('id', auth()->user()->id)->first();
         $userkaryawan = Userkaryawan::where('id_user', $user->id)->first();
@@ -148,7 +146,6 @@ class PresensiController extends Controller
         } else {
             $jamkerja = Jamkerja::where('kode_jam_kerja', $kode_jam_kerja)->first();
         }
-
 
         $ceklibur = Detailharilibur::join('hari_libur', 'hari_libur_detail.kode_libur', '=', 'hari_libur.kode_libur')
             ->where('nik', $karyawan->nik)
