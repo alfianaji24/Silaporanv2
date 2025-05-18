@@ -14,7 +14,7 @@
                 <div class="row">
                     <div class="col-12">
                         <form action="{{ route('presensi.index') }}">
-                            <x-input-with-icon label="Tanggal" value="{{ Request('tanggal') }}" name="tanggal" icon="ti ti-calendar"
+                            <x-input-with-icon label="Tanggal" value="{{ !empty(Request('tanggal')) ? Request('tanggal') : date('Y-m-d') }}" name="tanggal" icon="ti ti-calendar"
                                 datepicker="flatpickr-date" />
                             <!-- <div class="row">
                                 <div class="col-lg-12 col-sm-12 col-md-12">

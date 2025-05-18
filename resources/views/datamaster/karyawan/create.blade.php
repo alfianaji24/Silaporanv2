@@ -61,6 +61,7 @@
         </select>
     </div>
     <x-input-file name="foto" label="Foto" />
+    <x-input-with-icon icon="ti ti-fingerprint" label="PIN Finger Print" name="pin"/>
     <div class="form-group">
         <button class="btn btn-primary w-100" type="submit">
             <ion-icon name="send-outline" class="me-1"></ion-icon>

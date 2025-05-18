@@ -77,6 +77,12 @@ class PresensiController extends Controller
             $join->on('karyawan.nik', '=', 'presensi.nik');
         });
         $query->where('karyawan.status_aktif_karyawan', 1); // Hanya tampilkan karyawan aktif
+
+        // Add search condition for nama_karyawan
+        if (!empty($request->nama_karyawan)) {
+            $query->where('karyawan.nama_karyawan', 'like', '%' . $request->nama_karyawan . '%');
+        }
+
         $query->orderBy('nama_karyawan');
         $karyawan = $query->paginate(10);
         $karyawan->appends(request()->all());
