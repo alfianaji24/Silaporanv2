@@ -44,6 +44,7 @@ class JeniskelaminkaryawanChart
             ->setLabels($labels)
             ->setColors(['#FF6384', '#36A2EB'])
             ->setDataLabels(true)
+            ->setHeight(300)
             ->setOptions([
                 'dataLabels' => [
                     'enabled' => true,
