@@ -8,7 +8,7 @@
                  <img src="{{ asset('assets/img/logo/logo_silaporan.png') }}" alt="" width="32">
              </span>
              <span class="app-brand-text demo menu-text fw-bold"><i><b>S</b></i>ilaporan</span>
-         </a> 
+         </a>
 
          <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
              <i class="ti menu-toggle-icon d-none d-xl-block ti-sm align-middle"></i>
@@ -178,8 +178,15 @@
                      </li>
                  </ul>
              </li>
+        @endif
+        @if (auth()->user()->hasRole(['super admin']))
+        <li class="menu-item {{ request()->is(['wagateway', 'wagateway/*']) ? 'active' : '' }}">
+            <a href="{{ route('wagateway.index') }}" class="menu-link">
+                <i class="menu-icon tf-icons ti ti-brand-whatsapp"></i>
+                <div>Wa Gateway</div>
+            </a>
+        </li>
          @endif
-
      </ul>
  </aside>
  <!-- / Menu -->

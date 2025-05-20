@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\WagatewayController;
 use App\Http\Controllers\CabangController;
 use App\Http\Controllers\CutiController;
 use App\Http\Controllers\DashboardController;
@@ -302,6 +303,10 @@ Route::middleware('auth')->group(function () {
         Route::delete('/facerecognition/{id}/delete', 'destroy')->name('facerecognition.delete');
 
         Route::get('/facerecognition/getwajah', 'getWajah')->name('facerecognition.getwajah');
+    });
+
+    Route::controller(WagatewayController::class)->group(function () {
+        Route::get('/wagateway', 'index')->name('wagateway.index')->can('wagateway.index');
     });
 });
 

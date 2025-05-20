@@ -284,7 +284,11 @@ class PresensiController extends Controller
                             ]);
                             Storage::put($file, $image_base64);
                         }
-
+                        //Kirim Notifikasi ke WA
+                        if($karyawan->no_hp != ""){
+                            $message = "Terima Kasih, Hari ini " . $karyawan->nama_karyawan . " Sudah Absen Masuk Pada " . $jam_presensi . " Berhasil";
+                            $this->sendWA($karyawan->no_hp, $message);
+                        }
                         return response()->json(['status' => true, 'message' => 'Berhasil Absen Masuk', 'notifikasi' => 'notifikasi_absenmasuk'], 200);
                     } catch (\Exception $e) {
                         return response()->json(['status' => false, 'message' => $e->getMessage()], 400);
@@ -318,7 +322,11 @@ class PresensiController extends Controller
                             ]);
                             Storage::put($file, $image_base64);
                         }
-
+                        //Kirim Notifikasi ke WA
+                        if($karyawan->no_hp != ""){
+                            $message = "Terima Kasih, Hari ini " . $karyawan->nama_karyawan . " Sudah Absen Pulang Pada " . $jam_presensi . " Berhasil";
+                            $this->sendWA($karyawan->no_hp, $message);
+                        }
                         return response()->json(['status' => true, 'message' => 'Berhasil Absen Pulang', 'notifikasi' => 'notifikasi_absenpulang'], 200);
                     } catch (\Exception $e) {
                         return response()->json(['status' => false, 'message' => $e->getMessage()], 400);
@@ -328,6 +336,25 @@ class PresensiController extends Controller
         }
     }
 
+    function sendwa()
+    {
+        $generalsetting = Pengaturanumum::where('id', 1)->first();
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $generalsetting->domain_wa_gateway.'/send-message',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => array('message' => '$message','number' => '$no_hp','file_dikirim'=> ''),
+        ));
+
+        $response = curl_exec($curl);
+        curl_close($curl);
+    }
     public function edit(Request $request)
     {
         $nik = Crypt::decrypt($request->nik);

@@ -96,6 +96,26 @@ class DashboardController extends Controller
                 )
                 ->first();
 
+            // Get list of employees who are on time today
+            $data['karyawan_tepat_waktu'] = Presensi::join('presensi_jamkerja', 'presensi.kode_jam_kerja', '=', 'presensi_jamkerja.kode_jam_kerja')
+                ->join('karyawan', 'presensi.nik', '=', 'karyawan.nik')
+                ->join('departemen', 'karyawan.kode_dept', '=', 'departemen.kode_dept')
+                ->where('presensi.tanggal', $hari_ini)
+                ->where('presensi.jam_in', '<=', DB::raw('presensi_jamkerja.jam_masuk'))
+                ->where(function($query) {
+                    $query->where('presensi.jam_out', '>=', DB::raw('presensi_jamkerja.jam_pulang'))
+                          ->orWhereNull('presensi.jam_out');
+                })
+                ->select(
+                    'presensi.nik',
+                    'karyawan.nama_karyawan',
+                    'departemen.nama_dept',
+                    'presensi.jam_in',
+                    'presensi.jam_out'
+                )
+                ->orderBy('karyawan.nama_karyawan')
+                ->get();
+
             return view('dashboard.dashboard', $data);
         }
     }

@@ -125,9 +125,17 @@
           class="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-primary"
           required minlength="4" />
 
-        <input type="password" name="password" placeholder="Password"
-          class="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-primary"
-          required minlength="4" />
+        <div class="relative">
+          <input type="password" name="password" id="password" placeholder="Password"
+            class="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-primary"
+            required minlength="4" />
+          <button type="button" id="togglePassword" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+          </button>
+        </div>
 
         <div class="flex items-center text-sm text-gray-600">
           <input type="checkbox" name="remember" id="remember" class="mr-2 h-4 w-4">
@@ -135,11 +143,13 @@
         </div>
 
         <button type="submit"class="w-full bg-primary text-white py-2 rounded hover:bg-blue-700 transition">Sign In</button>
-        <div class="mt-6">
+
+        <!-- bug jika sehabis login menggunakan google makan password selalu salah !!! -->
+        <!-- <div class="mt-6">
             <a href="{{ route('google.login') }}" class="flex items-center justify-center bg-red-500 text-white py-2 rounded hover:bg-red-600 transition">
             <svg class="w-5 h-5 mr-2" viewBox="0 0 48 48"><path fill="#fff" d="M44.5 20H24v8.5h11.8C33.2 33.4 29 36.5 24 36.5c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.1 0 5.9 1.1 8.1 3l6-6C34.5 3.8 29.6 2 24 2 12.4 2 3.5 10.9 3.5 22.5S12.4 43 24 43c11.3 0 20.5-9.2 20.5-20.5 0-1.5-.2-2.9-.5-4.5z"/></svg>
             Sign in with Google</a>
-        </div>
+        </div> -->
         <p class="text-center text-sm text-gray-600">
           Forgot your password or login details?
           <a href="" class="text-primary hover:underline">Get help</a> signing in.
@@ -168,6 +178,24 @@
 
   <!-- Slider Script -->
   <script>
+    // Password toggle functionality
+    const togglePassword = document.getElementById('togglePassword');
+    const password = document.getElementById('password');
+
+    togglePassword.addEventListener('click', function() {
+      const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+      password.setAttribute('type', type);
+
+      // Toggle eye icon - correct logic based on standard UX
+      this.innerHTML = type === 'password'
+        ? `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+           </svg>`
+        : `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+           </svg>`;
+    });
     const slider = document.getElementById('slider');
     const bullets = document.querySelectorAll('.bullet');
     let index = 0;
