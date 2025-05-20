@@ -290,16 +290,6 @@ class PresensiController extends Controller
                             $this->sendWA($karyawan->no_hp, $message);
                         }
 
-                        // Kirim notifikasi ke super admin
-                        $admins = User::role('super admin')->get();
-                        foreach($admins as $admin) {
-                            if($admin->no_hp != null || $admin->no_hp != '') {
-                                $message_admin = "Notifikasi Absensi Masuk\nNama: " . $karyawan->nama_karyawan . "\nNIK: " . $karyawan->nik . "\nTanggal: " . $jam_presensi . "\nStatus: Masuk";
-                                $this->sendWA($admin->no_hp, $message_admin);
-                            }
-                        }
-                        // Kirim ke nomor HP admin spesifik
-                        $this->sendWA('085162663451', "Notifikasi Absensi Masuk\nNama: " . $karyawan->nama_karyawan . "\nNIK: " . $karyawan->nik . "\nTanggal: " . $jam_presensi . "\nStatus: Masuk");
                         return response()->json(['status' => true, 'message' => 'Berhasil Absen Masuk', 'notifikasi' => 'notifikasi_absenmasuk'], 200);
                     } catch (\Exception $e) {
                         return response()->json(['status' => false, 'message' => $e->getMessage()], 400);
@@ -338,17 +328,6 @@ class PresensiController extends Controller
                             $message = "Terima Kasih, " . $karyawan->nama_karyawan . " Absensi Pulang Anda Pada " . $jam_presensi . " Telah berhasil tercatat. Sampai Jumpa Besok!";
                             $this->sendWA($karyawan->no_hp, $message);
                         }
-
-                        // Kirim notifikasi ke super admin
-                        $admins = User::role('super admin')->get();
-                        foreach($admins as $admin) {
-                            if($admin->no_hp != null || $admin->no_hp != '') {
-                                $message_admin = "Notifikasi Absensi Pulang\nNama: " . $karyawan->nama_karyawan . "\nNIK: " . $karyawan->nik . "\nTanggal: " . $jam_presensi . "\nStatus: Pulang";
-                                $this->sendWA($admin->no_hp, $message_admin);
-                            }
-                        }
-                        // Kirim ke nomor HP admin spesifik
-                        $this->sendWA('085162663451', "Notifikasi Absensi Pulang\nNama: " . $karyawan->nama_karyawan . "\nNIK: " . $karyawan->nik . "\nTanggal: " . $jam_presensi . "\nStatus: Pulang");
                         return response()->json(['status' => true, 'message' => 'Berhasil Absen Pulang', 'notifikasi' => 'notifikasi_absenpulang'], 200);
                     } catch (\Exception $e) {
                         return response()->json(['status' => false, 'message' => $e->getMessage()], 400);
