@@ -189,7 +189,7 @@ class PresensiController extends Controller
         $kode_jam_kerja = $request->kode_jam_kerja;
 
         $tanggal_sekarang = date("Y-m-d");
-        $jam_sekarang = date("H:i");
+        $jam_sekarang = date("H:i:s");
 
         $tanggal_kemarin = date("Y-m-d", strtotime("-1 days"));
 
@@ -517,7 +517,7 @@ class PresensiController extends Controller
         }
 
         $tanggal_sekarang   = date("Y-m-d", strtotime($scan));
-        $jam_sekarang = date("H:i", strtotime($scan));
+        $jam_sekarang = date("H:i:s", strtotime($scan));
         $tanggal_kemarin = date("Y-m-d", strtotime("-1 days"));
 
         $tanggal_besok = date("Y-m-d", strtotime("+1 days"));
