@@ -613,7 +613,7 @@
                 qrcode.setAttribute("src", src);
             } else {
                 const statusSrc = src.startsWith('http') ? src :
-                    `#{baseUrl}/${src.replace(/^\.\//, '')}`;
+                    `${baseUrl}/${src.replace(/^\.\//, '')}`;
                 qrcode.setAttribute("src", statusSrc);
             }
             qrcode.setAttribute("alt", "loading");
