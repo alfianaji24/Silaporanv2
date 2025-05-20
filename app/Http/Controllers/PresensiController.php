@@ -286,7 +286,7 @@ class PresensiController extends Controller
                         }
                         //Kirim Notifikasi ke WA
                         if($karyawan->no_hp != null || $karyawan->no_hp != ''){
-                            $message = "Terima Kasih, " . $karyawan->nama_karyawan . " Absensi Masuk Anda Pada " . $jam_presensi . " Telah berhasil tercatat. Selamat Berkerja!";
+                            $message = "Terima Kasih, " . $karyawan->nama_karyawan . " Absensi Masuk Anda Pada " . date('d F Y', strtotime($jam_presensi)) . " Pukul " . date('H:i:s', strtotime($jam_presensi)) . " Telah berhasil tercatat. Selamat Berkerja!";
                             $this->sendWA($karyawan->no_hp, $message);
                         }
 
@@ -325,7 +325,7 @@ class PresensiController extends Controller
                         }
                         //Kirim Notifikasi ke WA
                         if($karyawan->no_hp != null || $karyawan->no_hp != ''){
-                            $message = "Terima Kasih, " . $karyawan->nama_karyawan . " Absensi Pulang Anda Pada " . $jam_presensi . " Telah berhasil tercatat. Sampai Jumpa Besok!";
+                            $message = "Terima Kasih, " . $karyawan->nama_karyawan . " Absensi Pulang Anda Pada " . date('d F Y', strtotime($jam_presensi)) . " Pukul " . date('H:i:s', strtotime($jam_presensi)) . " Telah berhasil tercatat. Sampai Jumpa Besok!";
                             $this->sendWA($karyawan->no_hp, $message);
                         }
                         return response()->json(['status' => true, 'message' => 'Berhasil Absen Pulang', 'notifikasi' => 'notifikasi_absenpulang'], 200);
