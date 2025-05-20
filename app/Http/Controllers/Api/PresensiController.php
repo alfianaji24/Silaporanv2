@@ -9,6 +9,7 @@ use App\Models\LogAbsen;
 use App\Models\Presensi;
 use App\Models\Setjamkerjabydate;
 use App\Models\Setjamkerjabyday;
+use App\Models\Pengaturanumum;
 use Illuminate\Http\Request;
 
 class PresensiController extends Controller
@@ -124,6 +125,11 @@ class PresensiController extends Controller
                         ]);
                     }
 
+                    // Kirim notifikasi WA untuk absen masuk
+                    if($karyawan->no_hp != null && $karyawan->no_hp != ''){
+                        $message = "Terima Kasih, " . $karyawan->nama_karyawan . " Absensi Masuk Anda Pada " . date('d F Y', strtotime($jam_presensi)) . " Pukul " . date('H:i:s', strtotime($jam_presensi)) . " Telah berhasil tercatat. Selamat Berkerja!";
+                        $this->sendWA($karyawan->no_hp, $message);
+                    }
 
                     return response()->json(['status' => true, 'message' => 'Berhasil Absen Masuk', 'notifikasi' => 'notifikasi_absenmasuk'], 200);
                 } catch (\Exception $e) {
@@ -148,6 +154,13 @@ class PresensiController extends Controller
                         'status' => 'h'
                     ]);
                 }
+
+                // Kirim notifikasi WA untuk absen pulang
+                if($karyawan->no_hp != null && $karyawan->no_hp != ''){
+                    $message = "Terima Kasih, " . $karyawan->nama_karyawan . " Absensi Pulang Anda Pada " . date('d F Y', strtotime($jam_presensi)) . " Pukul " . date('H:i:s', strtotime($jam_presensi)) . " Telah berhasil tercatat. Sampai Jumpa Besok!";
+                    $this->sendWA($karyawan->no_hp, $message);
+                }
+
                 return response()->json(['status' => true, 'message' => 'Berhasil Absen Pulang', 'notifikasi' => 'notifikasi_absenpulang'], 200);
             } catch (\Exception $e) {
                 return response()->json(['status' => false, 'message' => $e->getMessage()], 400);
@@ -155,6 +168,25 @@ class PresensiController extends Controller
         }
     }
 
+    function sendwa($no_hp, $message)
+    {
+        $generalsetting = Pengaturanumum::where('id', 1)->first();
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $generalsetting->domain_wa_gateway . '/send-message',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => array('message' => $message,'number' => $no_hp,'file_dikirim'=> ''),
+        ));
+
+        $response = curl_exec($curl);
+        curl_close($curl);
+    }
 
     public function log(Request $request)
     {
