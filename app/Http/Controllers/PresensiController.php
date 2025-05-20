@@ -341,7 +341,7 @@ class PresensiController extends Controller
         $generalsetting = Pengaturanumum::where('id', 1)->first();
         $curl = curl_init();
         curl_setopt_array($curl, array(
-            CURLOPT_URL => $generalsetting->domain_wa_gateway.'/send-message',
+            CURLOPT_URL => $generalsetting->domain_wa_gateway . '/send-message',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -349,7 +349,7 @@ class PresensiController extends Controller
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => array('message' => '$message','number' => '$no_hp','file_dikirim'=> ''),
+            CURLOPT_POSTFIELDS => array('message' => $message,'number' => $no_hp,'file_dikirim'=> ''),
         ));
 
         $response = curl_exec($curl);
