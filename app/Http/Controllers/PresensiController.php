@@ -285,7 +285,7 @@ class PresensiController extends Controller
                             Storage::put($file, $image_base64);
                         }
                         //Kirim Notifikasi ke WA
-                        if($karyawan->no_hp != ""){
+                        if($karyawan->no_hp != null || $karyawan->no_hp != ''){
                             $message = "Terima Kasih, Hari ini " . $karyawan->nama_karyawan . " Sudah Absen Masuk Pada " . $jam_presensi . " Berhasil";
                             $this->sendWA($karyawan->no_hp, $message);
                         }
@@ -323,7 +323,7 @@ class PresensiController extends Controller
                             Storage::put($file, $image_base64);
                         }
                         //Kirim Notifikasi ke WA
-                        if($karyawan->no_hp != ""){
+                        if($karyawan->no_hp != null || $karyawan->no_hp != ''){
                             $message = "Terima Kasih, Hari ini " . $karyawan->nama_karyawan . " Sudah Absen Pulang Pada " . $jam_presensi . " Berhasil";
                             $this->sendWA($karyawan->no_hp, $message);
                         }
@@ -336,7 +336,7 @@ class PresensiController extends Controller
         }
     }
 
-    function sendwa()
+    function sendwa($no_hp, $message)
     {
         $generalsetting = Pengaturanumum::where('id', 1)->first();
         $curl = curl_init();
