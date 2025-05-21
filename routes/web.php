@@ -27,6 +27,7 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Auth\GoogleController;
+use App\Http\Controllers\WaMessageStatusController;
 
 /*
 |--------------------------------------------------------------------------
@@ -310,6 +311,16 @@ Route::middleware('auth')->group(function () {
 
     Route::controller(WagatewayController::class)->group(function () {
         Route::get('/wagateway', 'index')->name('wagateway.index')->can('wagateway.index');
+    });
+
+    // WhatsApp Message Status Routes
+    Route::prefix('wa-message')->middleware(['auth', 'can:wagateway.index'])->group(function () {
+        Route::get('/status', [WaMessageStatusController::class, 'index'])->name('wa.message.status');
+        Route::get('/status/data', [WaMessageStatusController::class, 'getData'])->name('wa.message.status.data');
+        Route::post('/resend/{id}', [WaMessageStatusController::class, 'resend'])
+            ->name('wa.message.resend')
+            ->middleware('throttle:60,1'); // Limit to 60 requests per minute
+        Route::get('/stats', [WaMessageStatusController::class, 'getStats'])->name('wa.message.stats');
     });
 });
 

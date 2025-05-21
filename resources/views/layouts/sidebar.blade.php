@@ -180,11 +180,23 @@
              </li>
         @endif
         @if (auth()->user()->hasRole(['super admin']))
-        <li class="menu-item {{ request()->is(['wagateway', 'wagateway/*']) ? 'active' : '' }}">
-            <a href="{{ route('wagateway.index') }}" class="menu-link">
+        <li class="menu-item {{ request()->is(['wagateway', 'wagateway/*', 'wa-message/*']) ? 'open' : '' }}">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons ti ti-brand-whatsapp"></i>
                 <div>Wa Gateway</div>
             </a>
+            <ul class="menu-sub">
+                <li class="menu-item {{ request()->is(['wagateway', 'wagateway/*']) ? 'active' : '' }}">
+                    <a href="{{ route('wagateway.index') }}" class="menu-link">
+                        <div>Scan QR</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ request()->is(['wa-message/*']) ? 'active' : '' }}">
+                    <a href="{{ route('wa.message.status') }}" class="menu-link">
+                        <div>Status Pesan</div>
+                    </a>
+                </li>
+            </ul>
         </li>
          @endif
      </ul>
