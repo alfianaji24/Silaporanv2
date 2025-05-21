@@ -8,8 +8,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         @page {
-            size: A4;
-            margin: 2.5cm;
+            size: A4 landscape;
+            margin: 4cm 2.5cm 2.5cm 2.5cm; /* top right bottom left */
         }
         body {
             font-family: Arial, sans-serif;
@@ -19,9 +19,9 @@
             padding: 20px;
         }
         .header {
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             border-bottom: 2px solid #000;
-            padding-bottom: 15px;
+            padding-bottom: 0px;
         }
         .header table {
             width: 100%;
@@ -33,12 +33,20 @@
         }
         .header h4 {
             margin: 0;
-            line-height: 1.6;
+            line-height: 1.2;
             font-size: 14px;
-            padding: 5px 0;
+            padding: 2px 0;
+        }
+        .header span {
+            margin: 0;
+            padding: 0;
+            display: block; /* Ensure span takes full width */
+        }
+        .header table td {
+            padding: 1px 0;
         }
         .info-karyawan {
-            margin-bottom: 20px;
+            margin-bottom: 5px;
             padding: 12px;
             background-color: #f8f9fa;
             border: 1px solid #dee2e6;
@@ -49,7 +57,7 @@
             margin-bottom: 0;
         }
         .info-karyawan td {
-            padding: 5px 12px;
+            padding: 3px 12px;
         }
         .info-karyawan td:first-child {
             width: 120px;
@@ -58,36 +66,34 @@
         .datatable3 {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 25px;
+            margin-bottom: 5px;
             font-size: 10px;
             page-break-inside: auto;
         }
         .datatable3 th, .datatable3 td {
             border: 1px solid #000;
-            padding: 6px 8px;
+            padding: 2px 3px;
             text-align: center;
             vertical-align: middle;
         }
-        .datatable3 th {
-            background-color: #f0f0f0;
-            font-weight: bold;
-            padding: 8px;
+        .datatable3 .no-column {
+            width: 25px;
         }
         .datatable3 .tanggal-column {
-            width: 120px;
+            width: 100px;
             text-align: left;
             padding-left: 12px;
         }
         .datatable3 .status-column {
-            width: 80px;
+            width: 70px;
             padding: 6px 4px;
         }
         .datatable3 .jam-column {
-            width: 60px;
+            width: 80px;
             padding: 6px 4px;
         }
         .datatable3 .keterangan-column {
-            width: 100px;
+            width: 80px;
             padding: 6px 8px;
         }
         .datatable3 tfoot td {
@@ -102,46 +108,102 @@
             border-top: 1px solid #000;
             margin-top: 20px;
         }
-        .status-hadir { background-color: white; }
-        .status-izin { background-color: #ffc107; color: black; }
-        .status-sakit { background-color: #ffc107; color: black; }
-        .status-cuti { background-color: #0164b5; color: white; }
-        .status-libur { background-color: green; color: white; }
-        .status-tidak-hadir { background-color: red; color: white; }
         .content {
             padding: 10px 0;
         }
 
         /* Print styles */
         @media print {
+            @page {
+                size: A4 landscape !important; /* Pastikan orientasi landscape dengan !important */
+                margin: 0.8cm 0.8cm 0.8cm 0.8cm;
+            }
+            html, body {
+                width: 100%; /* Kembali ke 100% agar browser mengatur dimensi berdasarkan size landscape */
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
             body {
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
                 padding: 0;
                 margin: 0;
+                font-size: 8px !important;
+                transform: rotate(0deg) !important; /* Memastikan tidak ada rotasi dengan !important */
             }
-             @page {
-                size: A4;
-                margin: 2.5cm;
-            }
-
             .header {
-                margin: 0 20px 20px 20px;
+                margin: 0 5px 2px 5px;
+            }
+            .header h4 {
+                font-size: 11px !important;
+                line-height: 1.1 !important;
+                padding: 1px 0 !important;
+            }
+            .header span {
+                font-size: 8px !important;
+                line-height: 1.1 !important;
             }
             .content {
-                padding: 20px 0;
-                margin: 0 20px;
+                padding: 0;
+                margin: 0 5px;
+                padding-top: 1mm;
             }
             .info-karyawan {
-                margin: 0 20px 20px 20px;
+                margin: 0 5px 0 5px;
+                font-size: 8px !important;
+            }
+            .info-karyawan td {
+                padding: 1px 2px !important;
+                line-height: 1.1 !important;
             }
             .datatable3 {
-                margin-bottom: 30px;
-                margin-top: 15px;
+                margin-bottom: 2px;
+                font-size: 8px !important;
+                width: 100% !important;
+                table-layout: fixed !important;
+            }
+            .datatable3 th, .datatable3 td {
+                padding: 1px !important;
+                line-height: 1.1 !important;
+                font-size: 8px !important;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+            }
+            .datatable3 .no-column {
+                width: 18px !important;
+            }
+            .datatable3 .tanggal-column {
+                width: 85px !important;
+            }
+            .datatable3 .status-column {
+                width: 35px !important;
+            }
+            .datatable3 .jam-column {
+                width: 45px !important;
+            }
+            .datatable3 .keterangan-column {
+                width: 55px !important;
+            }
+            /* Kolom Denda dan Pot. Jam */
+            .datatable3 th:last-child,
+            .datatable3 td:last-child,
+            .datatable3 th:nth-last-child(2),
+            .datatable3 td:nth-last-child(2) {
+                width: 65px !important;
+            }
+            .datatable3 tfoot td {
+                padding: 1px !important;
+                line-height: 1.1 !important;
+                font-size: 8px !important;
             }
             .footer {
-                margin: 0 20px;
-                padding: 10px 0;
+                margin: 0 5px;
+                padding: 2px 0;
+                page-break-before: avoid;
+                line-height: 1.1;
+                font-size: 7px !important;
             }
             .no-print {
                 display: none !important;
@@ -201,8 +263,7 @@
                         <br>
                         PERIODE {{ date('d-m-Y', strtotime($periode_dari)) }} - {{ date('d-m-Y', strtotime($periode_sampai)) }}
                     </h4>
-                    <span style="font-style: italic;">{{ $generalsetting->alamat }}</span><br>
-                    <span style="font-style: italic;">{{ $generalsetting->telepon }}</span>
+                    <span style="font-style: italic;">{{ $generalsetting->alamat }} | {{ $generalsetting->telepon }}</span>
                 </td>
             </tr>
         </table>
@@ -229,12 +290,11 @@
         <table class="datatable3">
             <thead>
                 <tr>
+                    <th rowspan="2" class="no-column">NO</th>
                     <th rowspan="2">Tanggal</th>
-                    <th rowspan="2">Status</th>
                     <th colspan="2">Jam Kerja</th>
                     <th colspan="2">Presensi</th>
-                    <th rowspan="2">Keterlambatan</th>
-                    <th rowspan="2">Pulang Cepat</th>
+                    <th colspan="6">Keterangan</th>
                     <th rowspan="2">Denda</th>
                     <th rowspan="2">Pot. Jam</th>
                 </tr>
@@ -243,6 +303,12 @@
                     <th>Pulang</th>
                     <th>Masuk</th>
                     <th>Pulang</th>
+                    <th>Keterlambatan</th>
+                    <th>Pulang Cepat</th>
+                    <th>Status</th>
+                    <th>Izin Absen</th>
+                    <th>Sakit</th>
+                    <th>Cuti</th>
                 </tr>
             </thead>
             <tbody>
@@ -250,15 +316,26 @@
                     $tanggal_presensi = $periode_dari;
                     $total_denda = 0;
                     $total_potongan_jam = 0;
-                    $total_keterlambatan = 0;
+                    $total_keterlambatan_menit = 0;
+                    $total_pulang_cepat_menit = 0;
+                    $total_izin_absen = 0;
+                    $total_sakit = 0;
+                    $total_cuti = 0;
+                    $total_tidak_hadir = 0;
                     $row_count = 0;
+                    $nama_bulan = [
+                        1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April', 5 => 'Mei', 6 => 'Juni',
+                        7 => 'Juli', 8 => 'Agustus', 9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+                    ];
                 @endphp
                 @while (strtotime($tanggal_presensi) <= strtotime($periode_sampai))
                     @php
                         $row_count++;
                         $denda = 0;
-                        $potongan_jam = 0;
-                        $keterlambatan_menit = 0;
+                        $potongan_jam_harian = 0;
+                        $keterlambatan_menit_harian = 0;
+                        $pulang_cepat_menit_harian = 0;
+
                         $search = [
                             'nik' => $karyawan['nik'],
                             'tanggal' => $tanggal_presensi,
@@ -266,22 +343,20 @@
                         $ceklibur = ceklibur($datalibur, $search);
                         $status = '';
                         $keterangan = '';
-                        $jam_masuk = '';
-                        $jam_pulang = '';
+                        $jam_masuk_jadwal = '';
+                        $jam_pulang_jadwal = '';
                         $jam_in = '';
                         $jam_out = '';
-                        $terlambat = '';
-                        $pulang_cepat = '';
-                        $bgcolor = 'white';
-                        $textcolor = 'black';
+                        $terlambat_display = '-';
+                        $pulang_cepat_display = '-';
                     @endphp
 
                     @if (isset($karyawan[$tanggal_presensi]))
                         @if ($karyawan[$tanggal_presensi]['status'] == 'h')
                             @php
-                                $status = 'Hadir';
-                                $jam_masuk = date('H:i', strtotime($karyawan[$tanggal_presensi]['jam_masuk']));
-                                $jam_pulang = date('H:i', strtotime($karyawan[$tanggal_presensi]['jam_pulang']));
+                                $status = '';
+                                $jam_masuk_jadwal = date('H:i', strtotime($karyawan[$tanggal_presensi]['jam_masuk']));
+                                $jam_pulang_jadwal = date('H:i', strtotime($karyawan[$tanggal_presensi]['jam_pulang']));
                                 $jam_in = !empty($karyawan[$tanggal_presensi]['jam_in'])
                                     ? date('H:i', strtotime($karyawan[$tanggal_presensi]['jam_in']))
                                     : '-';
@@ -290,85 +365,147 @@
                                     : '-';
 
                                 $jam_masuk_full = $tanggal_presensi . ' ' . $karyawan[$tanggal_presensi]['jam_masuk'];
-                                $terlambat_data = hitungjamterlambat($karyawan[$tanggal_presensi]['jam_in'], $jam_masuk_full);
-                                $terlambat = $terlambat_data != null ? $terlambat_data['show_laporan'] : '-';
 
-                                if ($terlambat_data != null) {
-                                    if ($terlambat_data['desimal_terlambat'] < 1) {
-                                        $potongan_jam_terlambat = 0;
-                                        $denda = hitungdenda($denda_list, $terlambat_data['menitterlambat']);
-                                        $keterlambatan_menit = $terlambat_data['menitterlambat'];
-                                    } else {
-                                        $potongan_jam_terlambat = $terlambat_data['desimal_terlambat'];
-                                        $denda = 0;
-                                        $keterlambatan_menit = $terlambat_data['menitterlambat'];
+                                if (!empty($karyawan[$tanggal_presensi]['jam_in']) && strtotime($karyawan[$tanggal_presensi]['jam_in']) > strtotime($jam_masuk_full)) {
+                                    $terlambat_data = hitungjamterlambat($karyawan[$tanggal_presensi]['jam_in'], $jam_masuk_full);
+                                    if ($terlambat_data != null) {
+                                        $terlambat_display = $terlambat_data['show_laporan'];
+                                        // Logika untuk menentukan denda dan potongan jam dari keterlambatan
+                                        if ($terlambat_data['desimal_terlambat'] < 1) {
+                                            $denda += hitungdenda($denda_list, $terlambat_data['menitterlambat']);
+                                            // Potongan jam harian tetap 0 jika keterlambatan kurang dari 1 jam
+                                        } else {
+                                            // Tidak ada denda jika keterlambatan 1 jam atau lebih
+                                            $potongan_jam_harian += $terlambat_data['desimal_terlambat']; // Tambahkan potongan jam jika >= 1 jam
+                                        }
+                                        $keterlambatan_menit_harian = $terlambat_data['menitterlambat'];
                                     }
                                 }
 
-                                $pulang_cepat = hitungpulangcepat(
-                                    $tanggal_presensi,
-                                    $karyawan[$tanggal_presensi]['jam_out'],
-                                    $karyawan[$tanggal_presensi]['jam_pulang'],
-                                    $karyawan[$tanggal_presensi]['istirahat'],
-                                    $karyawan[$tanggal_presensi]['jam_awal_istirahat'],
-                                    $karyawan[$tanggal_presensi]['jam_akhir_istirahat'],
-                                    $karyawan[$tanggal_presensi]['lintashari']
-                                );
-                                $pulang_cepat = $pulang_cepat != null ? $pulang_cepat . ' Jam' : '-';
-                                $potongan_jam = ($pulang_cepat != '-' ? floatval($pulang_cepat) : 0) + ($potongan_jam_terlambat ?? 0);
+                                if (!empty($karyawan[$tanggal_presensi]['jam_out']) && strtotime($karyawan[$tanggal_presensi]['jam_out']) < strtotime($tanggal_presensi . ' ' . $karyawan[$tanggal_presensi]['jam_pulang'])) {
+                                    $pulang_cepat_data = hitungpulangcepat(
+                                        $tanggal_presensi,
+                                        $karyawan[$tanggal_presensi]['jam_out'],
+                                        $karyawan[$tanggal_presensi]['jam_pulang'],
+                                        $karyawan[$tanggal_presensi]['istirahat'],
+                                        $karyawan[$tanggal_presensi]['jam_awal_istirahat'],
+                                        $karyawan[$tanggal_presensi]['jam_akhir_istirahat'],
+                                        $karyawan[$tanggal_presensi]['lintashari']
+                                    );
+                                    if ($pulang_cepat_data != null) {
+                                        $pulang_cepat_display = $pulang_cepat_data['show_laporan'];
+                                        $pulang_cepat_menit_harian = $pulang_cepat_data['menit_pulang_cepat'];
+                                        $potongan_jam_harian += $pulang_cepat_data['potongan_jam'];
+                                    }
+                                }
                             @endphp
                         @elseif($karyawan[$tanggal_presensi]['status'] == 'i')
                             @php
-                                $status = 'Izin';
+                                $status = 'V';
                                 $keterangan = $karyawan[$tanggal_presensi]['keterangan_izin_absen'];
-                                $bgcolor = '#ffc107';
-                                $textcolor = 'black';
+                                $jam_masuk_jadwal = '-';
+                                $jam_pulang_jadwal = '-';
+                                $jam_in = '-';
+                                $jam_out = '-';
                             @endphp
                         @elseif($karyawan[$tanggal_presensi]['status'] == 's')
                             @php
-                                $status = 'Sakit';
+                                $status = 'V';
                                 $keterangan = $karyawan[$tanggal_presensi]['keterangan_izin_sakit'];
-                                $bgcolor = '#ffc107';
-                                $textcolor = 'black';
+                                $jam_masuk_jadwal = '-';
+                                $jam_pulang_jadwal = '-';
+                                $jam_in = '-';
+                                $jam_out = '-';
                             @endphp
                         @elseif($karyawan[$tanggal_presensi]['status'] == 'c')
                             @php
-                                $status = 'Cuti';
+                                $status = 'V';
                                 $keterangan = $karyawan[$tanggal_presensi]['keterangan_izin_cuti'];
-                                $bgcolor = '#0164b5';
-                                $textcolor = 'white';
+                                $jam_masuk_jadwal = '-';
+                                $jam_pulang_jadwal = '-';
+                                $jam_in = '-';
+                                $jam_out = '-';
                             @endphp
                         @endif
                     @else
                         @php
-                            $status = 'Tidak Hadir';
-                            $bgcolor = 'red';
-                            $textcolor = 'white';
+                            $status = 'V';
+                            $jam_masuk_jadwal = '-';
+                            $jam_pulang_jadwal = '-';
+                            $jam_in = '-';
+                            $jam_out = '-';
                             if (!empty($ceklibur)) {
-                                $status = 'Libur';
+                                $status = 'L';
                                 $keterangan = $ceklibur[0]['keterangan'];
-                                $bgcolor = 'green';
                             }
                         @endphp
                     @endif
 
                     @php
+                        // Increment counters based on status
+                        if (isset($karyawan[$tanggal_presensi])) {
+                            if ($karyawan[$tanggal_presensi]['status'] == 'i') {
+                                $total_izin_absen++;
+                            } elseif ($karyawan[$tanggal_presensi]['status'] == 's') {
+                                $total_sakit++;
+                            } elseif ($karyawan[$tanggal_presensi]['status'] == 'c') {
+                                $total_cuti++;
+                            }
+                        } else {
+                            // Jika tidak ada data (tidak hadir), hitung sebagai V
+                            if (!empty($ceklibur)) {
+                                // Jika libur, tidak dihitung
+                            } else {
+                                $total_tidak_hadir++;
+                            }
+                        }
+
                         $total_denda += $denda;
-                        $total_potongan_jam += $potongan_jam;
-                        $total_keterlambatan += $keterlambatan_menit;
+                        $total_potongan_jam += $potongan_jam_harian;
+                        $total_keterlambatan_menit += $keterlambatan_menit_harian;
+                        $total_pulang_cepat_menit += $pulang_cepat_menit_harian;
                     @endphp
 
-                    <tr class="status-{{ strtolower($status) }}">
-                        <td class="tanggal-column">{{ date('d-m-Y', strtotime($tanggal_presensi)) }} ({{ getHari($tanggal_presensi) }})</td>
-                        <td class="status-column">{{ $status }}</td>
-                        <td class="jam-column">{{ $jam_masuk }}</td>
-                        <td class="jam-column">{{ $jam_pulang }}</td>
+                    <tr style="{{ strtolower($status) == 'v' ? 'background-color: #d3d3d3 !important; color: black !important;' : '' }}">
+                         <td class="no-column">{{ $row_count }}</td>
+                        <td class="tanggal-column">
+                            @php
+                                $hari = getHari($tanggal_presensi);
+                                $tanggal = date('d', strtotime($tanggal_presensi));
+                                $bulan = $nama_bulan[date('n', strtotime($tanggal_presensi))];
+                                $tahun = date('Y', strtotime($tanggal_presensi));
+                            @endphp
+                            {{ $hari }}, {{ $tanggal }} {{ $bulan }} {{ $tahun }}
+                        </td>
+                        <td class="jam-column">{{ $jam_masuk_jadwal }}</td>
+                        <td class="jam-column">{{ $jam_pulang_jadwal }}</td>
                         <td class="jam-column">{{ $jam_in }}</td>
                         <td class="jam-column">{{ $jam_out }}</td>
-                        <td class="keterangan-column">{{ $terlambat }}</td>
-                        <td class="keterangan-column">{{ $pulang_cepat }}</td>
+                        <td class="keterangan-column">{{ $terlambat_display }}</td>
+                        <td class="keterangan-column">{{ $pulang_cepat_display }}</td>
+                        <td class="status-column">{{ $status }}</td>
+                        <td class="keterangan-column">{{ $status == 'Izin' ? $keterangan : '-' }}</td>
+                        <td class="keterangan-column">{{ $status == 'Sakit' ? $keterangan : '-' }}</td>
+                        <td class="keterangan-column">{{ $status == 'Cuti' ? $keterangan : '-' }}</td>
                         <td class="jam-column">{{ $denda > 0 ? formatAngka($denda) : '-' }}</td>
-                        <td class="jam-column">{{ $potongan_jam > 0 ? formatAngkaDesimal($potongan_jam) : '-' }}</td>
+                        <td class="jam-column">
+                            @php
+                                // Convert decimal hours to hours and minutes for display
+                                $harian_hours = floor($potongan_jam_harian);
+                                $harian_minutes = round(($potongan_jam_harian - $harian_hours) * 60);
+
+                                // Handle case where minutes round up to 60
+                                if ($harian_minutes >= 60) {
+                                    $harian_hours += 1;
+                                    $harian_minutes = 0;
+                                }
+                                $potongan_jam_display = '-';
+                                if ($potongan_jam_harian > 0) {
+                                    $potongan_jam_display = $harian_hours . ' Jam ' . $harian_minutes . ' Menit';
+                                }
+                            @endphp
+                            {{ $potongan_jam_display }}
+                        </td>
                     </tr>
 
                     @php
@@ -377,21 +514,43 @@
                 @endwhile
             </tbody>
             <tfoot>
-                <tr style="font-weight: bold; background-color: #f0f0f0">
-                    <td colspan="8" style="text-align: right">Total:</td>
-                    <td>{{ formatAngka($total_denda) }}</td>
-                    <td>{{ formatAngkaDesimal($total_potongan_jam) }}</td>
-                </tr>
-                <tr style="font-weight: bold; background-color: #f0f0f0">
-                    <td colspan="8" style="text-align: right">Total Keterlambatan:</td>
+                <tr>
+                    <td colspan="6" style="text-align: right;">Jumlah:</td>
                     <td>
                         @php
-                            $hours = floor($total_keterlambatan / 60);
-                            $minutes = $total_keterlambatan % 60;
+                            $hours_k = floor($total_keterlambatan_menit / 60);
+                            $minutes_k = $total_keterlambatan_menit % 60;
+                            $minutes_k_display = $minutes_k < 10 ? '0' . $minutes_k : $minutes_k;
                         @endphp
-                        {{ $hours }} Jam {{ $minutes }} Menit
+                        {{ $total_keterlambatan_menit > 0 ? $hours_k . ' Jam ' . $minutes_k_display . ' Menit' : '-' }}
                     </td>
-                    <td></td>
+                    <td>
+                        @php
+                            $hours_pc = floor($total_pulang_cepat_menit / 60);
+                            $minutes_pc = $total_pulang_cepat_menit % 60;
+                            $minutes_pc_display = $minutes_pc < 10 ? '0' . $minutes_pc : $minutes_pc;
+                        @endphp
+                        {{ $total_pulang_cepat_menit > 0 ? $hours_pc . ' Jam ' . $minutes_pc_display . ' Menit' : '-' }}
+                    </td>
+                    <td>{{ isset($total_tidak_hadir) && $total_tidak_hadir > 0 ? $total_tidak_hadir : '-' }}</td>
+                    <td>{{ $total_izin_absen > 0 ? $total_izin_absen : '-' }}</td>
+                    <td>{{ $total_sakit > 0 ? $total_sakit : '-' }}</td>
+                    <td>{{ $total_cuti > 0 ? $total_cuti : '-' }}</td>
+                    <td class="jam-column">{{ $total_denda > 0 ? 'Rp ' . number_format($total_denda, 0, ',', '.') : '-' }}</td>
+                    <td class="jam-column">
+                        @php
+                            // Convert decimal hours to hours and minutes
+                            $total_hours = floor($total_potongan_jam);
+                            $total_minutes = round(($total_potongan_jam - $total_hours) * 60);
+
+                            // Handle case where minutes round up to 60
+                            if ($total_minutes >= 60) {
+                                $total_hours += 1;
+                                $total_minutes = 0;
+                            }
+                        @endphp
+                        {{ $total_potongan_jam > 0 ? $total_hours . ' Jam ' . $total_minutes . ' Menit' : '-' }}
+                    </td>
                 </tr>
             </tfoot>
         </table>
@@ -405,9 +564,18 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://kit.fontawesome.com/your-fontawesome-kit.js"></script>
     <script>
-        // Function to handle PDF download
-        function downloadPDF() {
-            window.print();
+        function printPDF() {
+            // Set orientasi landscape sebelum print
+            let style = document.createElement('style');
+            style.innerHTML = '@page { size: landscape; }';
+            document.head.appendChild(style);
+
+            // Tunggu sebentar untuk memastikan style diterapkan
+            setTimeout(() => {
+                window.print();
+                // Hapus style setelah print
+                document.head.removeChild(style);
+            }, 100);
         }
     </script>
 </body>

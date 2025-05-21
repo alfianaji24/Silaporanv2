@@ -30,8 +30,8 @@
                         <label class="form-label">Periode Laporan</label>
                         <select name="periode_laporan" id="periode_laporan" class="form-select">
                             <option value="">Pilih Periode Laporan</option>
-                            <option value="1">Periode Gaji</option>
-                            <option value="2">Bulan Berjalan</option>
+                            <option value="1">Bulan Berjalan</option>
+                            <option value="2">Periode Gaji</option>
                         </select>
                     </div>
 

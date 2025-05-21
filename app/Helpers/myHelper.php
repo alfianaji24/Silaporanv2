@@ -352,9 +352,19 @@ function hitungpulangcepat($tanggal_presensi, $jam_out, $jam_pulang, $istirahat,
         $keterangan_pulangcepat = $jpulangcepat . ':' . $mpulangcepat;
         $desimal_pulangcepat = $jam_pulangcepat +   ROUND(($menit_pulangcepat / 60), 2);
 
-        return $desimal_pulangcepat;
+        // return $desimal_pulangcepat;
+        return [
+            'menit_pulang_cepat' => ($jam_pulangcepat * 60) + $menit_pulangcepat,
+            'potongan_jam' => $desimal_pulangcepat,
+            'show_laporan' => $jam_pulangcepat > 0 ? $jam_pulangcepat . ' Jam ' . $menit_pulangcepat . ' Menit' : $menit_pulangcepat . ' Menit',
+        ];
     } else {
-        return 0;
+        // return 0;
+        return [
+            'menit_pulang_cepat' => 0,
+            'potongan_jam' => 0,
+            'show_laporan' => '-',
+        ];
     }
 }
 function hitungjamterlambat($jam_in, $jam_mulai)
@@ -390,14 +400,20 @@ function hitungjamterlambat($jam_in, $jam_mulai)
             //     $desimal_terlambat = $desimal_terlambat;
             // }
 
-            $show = $desimal_terlambat < 1 ? $menitterlambat . " Menit" : formatAngkaDesimal($desimal_terlambat) . " Jam";
+            // Format display based on hours and minutes
+            $show = '';
+            if ($jamterlambat > 0) {
+                $show = $jamterlambat . ' Jam ';
+            }
+            $show .= $menitterlambat . ' Menit';
+
             return [
                 'keterangan_terlambat' => $keterangan_terlambat,
                 'jamterlambat' => $jamterlambat,
                 'menitterlambat' => $menitterlambat,
                 'desimal_terlambat' => $desimal_terlambat,
                 'show' => '<span class="badge bg-danger">' . $show . '</span>',
-                'show_laporan' => 'Telat :' . $show,
+                'show_laporan' => $show,
                 'color' => 'red'
                 // 'color_terlambat' => $color_terlambat
             ];

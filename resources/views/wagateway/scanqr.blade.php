@@ -107,9 +107,29 @@
             transition: all 0.2s ease;
         }
 
-        .retry-button:hover {
-            background: #5f61e6;
+        .reconnect-button {
+            display: none;
+            margin-top: 10px;
+            margin-left: 10px;
+            padding: 8px 16px;
+            background: #25D366;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .reconnect-button:hover {
+            background: #22c55e;
             transform: translateY(-1px);
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
         }
 
         .loading-container {
@@ -276,7 +296,10 @@
                                         style="width: 250px;">
                                 </div>
                                 <div id="status-message" class="loading-text mt-3">Menghubungkan ke server...</div>
-                                <button id="retry-button" class="retry-button mt-3">Coba Lagi</button>
+                                <div class="button-container">
+                                    <button id="retry-button" class="retry-button">Coba Lagi</button>
+                                    <button id="reconnect-button" class="reconnect-button">Reconnect Session</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -347,6 +370,7 @@
         const statusMessage = document.getElementById("status-message");
         const connectionStatus = document.getElementById("connection-status");
         const retryButton = document.getElementById("retry-button");
+        const reconnectButton = document.getElementById("reconnect-button");
         const loadingContainer = document.getElementById("loading-container");
         const successIconContainer = document.getElementById("success-icon-container");
         const whatsappStatusIcon = document.getElementById("whatsapp-status-icon");
@@ -362,7 +386,8 @@
             reconnectAttempts: 0,
             maxReconnectAttempts: 5,
             reconnectionInterval: null,
-            pollingInterval: null
+            pollingInterval: null,
+            hasExistingSession: false
         };
 
         // Initialize socket.io connection
@@ -423,6 +448,38 @@
             }
         }
 
+        // Function to check for existing session
+        function checkExistingSession() {
+            socket.emit('check_session');
+        }
+
+        // Handle session check response
+        socket.on('session_status', (status) => {
+            console.log('Session status:', status);
+            connectionState.hasExistingSession = status.hasSession;
+
+            if (status.hasSession) {
+                reconnectButton.style.display = 'inline-block';
+            } else {
+                reconnectButton.style.display = 'none';
+            }
+        });
+
+        // Handle reconnection attempt
+        function attemptReconnect() {
+            console.log('Attempting to reconnect to existing session...');
+            showLoading();
+            statusMessage.textContent = 'Mencoba menghubungkan ke sesi yang ada...';
+            statusMessage.className = 'loading-text';
+            socket.emit('reconnect_session');
+        }
+
+        // Add reconnect button click handler
+        reconnectButton.onclick = () => {
+            reconnectButton.style.display = 'none';
+            attemptReconnect();
+        };
+
         // Socket event handlers
         socket.on('whatsapp_status', (status) => {
             console.log('WhatsApp status event:', status);
@@ -431,11 +488,13 @@
 
             if (status.connected) {
                 connectionState.lastConnected = Date.now();
+                reconnectButton.style.display = 'none';
             }
 
             updateWhatsAppStatus(status.connected);
 
             if (!status.connected) {
+                checkExistingSession();
                 socket.emit('request_qr');
             }
         });
@@ -483,6 +542,7 @@
             connectionState.reconnectAttempts = 0;
             updateConnectionStatus('connected');
             startStatusPolling();
+            checkExistingSession();
         });
 
         socket.on('disconnect', (reason) => {
@@ -493,11 +553,13 @@
             updateWhatsAppStatus(false);
             showRetryButton();
             startAutoReconnect();
+            checkExistingSession();
         });
 
-        // Initialize with disconnected state
+        // Initialize with disconnected state and check for existing session
         updateWhatsAppStatus(false);
         startStatusPolling();
+        checkExistingSession();
 
         // Auto-reconnect function
         function startAutoReconnect() {

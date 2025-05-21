@@ -23,15 +23,17 @@ class LaporanController extends Controller
 
     public function cetakpresensi(Request $request)
     {
-
-
         $generalsetting = Pengaturanumum::where('id', 1)->first();
         $periode_laporan_dari = $generalsetting->periode_laporan_dari;
         $periode_laporan_sampai = $generalsetting->periode_laporan_sampai;
         $periode_laporan_lintas_bulan = $generalsetting->periode_laporan_next_bulan;
 
-
         if ($request->periode_laporan == 1) {
+            // Bulan Berjalan - dari tanggal 1 sampai akhir bulan
+            $periode_dari = $request->tahun . '-' . str_pad($request->bulan, 2, '0', STR_PAD_LEFT) . '-01';
+            $periode_sampai = date('Y-m-t', strtotime($periode_dari));
+        } else if ($request->periode_laporan == 2) {
+            // Periode Gaji - menggunakan pengaturan dari general setting
             if ($periode_laporan_lintas_bulan == 1) {
                 if ($request->bulan == 1) {
                     $bulan = 12;
@@ -44,14 +46,9 @@ class LaporanController extends Controller
                 $bulan = $request->bulan;
                 $tahun = $request->tahun;
             }
-            // Menambahkan nol di depan bulan jika bulan kurang dari 10
-
             $bulan = str_pad($bulan, 2, '0', STR_PAD_LEFT);
-            $periode_dari = $request->tahun . '-' . $bulan . '-01';
-            $periode_sampai = $request->tahun . '-' . $request->bulan . '-' . $periode_laporan_sampai;
-        } else {
-            $periode_dari = $request->tahun . '-' . $request->bulan . '-01';
-            $periode_sampai = date('Y-m-t', strtotime($periode_dari));
+            $periode_dari = $tahun . '-' . $bulan . '-' . $periode_laporan_dari;
+            $periode_sampai = $request->tahun . '-' . str_pad($request->bulan, 2, '0', STR_PAD_LEFT) . '-' . $periode_laporan_sampai;
         }
 
 
@@ -174,6 +171,11 @@ class LaporanController extends Controller
 
         // Hitung periode laporan
         if ($request->periode_laporan == 1) {
+            // Bulan Berjalan - dari tanggal 1 sampai akhir bulan
+            $periode_dari = $request->tahun . '-' . str_pad($request->bulan, 2, '0', STR_PAD_LEFT) . '-01';
+            $periode_sampai = date('Y-m-t', strtotime($periode_dari));
+        } else if ($request->periode_laporan == 2) {
+            // Periode Gaji - menggunakan pengaturan dari general setting
             if ($periode_laporan_lintas_bulan == 1) {
                 if ($request->bulan == 1) {
                     $bulan = 12;
@@ -186,13 +188,9 @@ class LaporanController extends Controller
                 $bulan = $request->bulan;
                 $tahun = $request->tahun;
             }
-
             $bulan = str_pad($bulan, 2, '0', STR_PAD_LEFT);
             $periode_dari = $tahun . '-' . $bulan . '-' . $periode_laporan_dari;
             $periode_sampai = $request->tahun . '-' . str_pad($request->bulan, 2, '0', STR_PAD_LEFT) . '-' . $periode_laporan_sampai;
-        } else {
-            $periode_dari = $request->tahun . '-' . str_pad($request->bulan, 2, '0', STR_PAD_LEFT) . '-01';
-            $periode_sampai = date('Y-m-t', strtotime($periode_dari));
         }
 
         // Cek karyawan
@@ -274,22 +272,37 @@ class LaporanController extends Controller
 
             // Hitung denda dan potongan jam
             if ($row->status == 'h') {
+                $potongan_jam = 0;
                 if (!empty($row->jam_in) && strtotime($row->jam_in) > strtotime($row->jam_masuk)) {
                     $terlambat_data = hitungjamterlambat($row->jam_in, $row->jam_masuk);
                     if ($terlambat_data != null) {
                         if ($terlambat_data['desimal_terlambat'] < 1) {
                             $denda = hitungdenda($denda_list, $terlambat_data['menitterlambat']);
+                            $potongan_jam = 0; // Tidak ada potongan jam jika terlambat < 1 jam
                         } else {
                             $denda = 0;
+                            $potongan_jam = $terlambat_data['desimal_terlambat']; // Potongan jam = desimal keterlambatan
                         }
                         $total_keterlambatan += $terlambat_data['menitterlambat'];
                     }
                     $total_denda += $denda;
                 }
+
                 if (!empty($row->jam_out) && strtotime($row->jam_out) < strtotime($row->jam_pulang)) {
-                    $potongan_jam = hitungPotonganJam($row->jam_out, $row->jam_pulang);
-                    $total_potongan_jam += $potongan_jam;
+                    $pulang_cepat_data = hitungpulangcepat(
+                        $row->tanggal,
+                        $row->jam_out,
+                        $row->jam_pulang,
+                        $row->istirahat,
+                        $row->jam_awal_istirahat,
+                        $row->jam_akhir_istirahat,
+                        $row->lintashari
+                    );
+                    if ($pulang_cepat_data != null) {
+                        $potongan_jam += $pulang_cepat_data['potongan_jam']; // Tambahkan potongan jam pulang cepat
+                    }
                 }
+                $total_potongan_jam += $potongan_jam;
             }
         }
 
