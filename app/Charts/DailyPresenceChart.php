@@ -34,12 +34,13 @@ class DailyPresenceChart
             ->join('presensi_jamkerja', 'presensi.kode_jam_kerja', '=', 'presensi_jamkerja.kode_jam_kerja')
             ->select(
                 DB::raw('DAY(tanggal) as day'),
-                DB::raw('SUM(CASE WHEN presensi.jam_out < presensi_jamkerja.jam_pulang AND presensi.jam_out IS NOT NULL THEN 1 ELSE 0 END) as pulang_cepat_count'),
-                DB::raw('SUM(CASE WHEN presensi.jam_in > presensi_jamkerja.jam_masuk AND (presensi.jam_out >= presensi_jamkerja.jam_pulang OR presensi.jam_out IS NULL) THEN 1 ELSE 0 END) as terlambat_count'),
-                DB::raw('SUM(CASE WHEN presensi.jam_in <= presensi_jamkerja.jam_masuk AND (presensi.jam_out >= presensi_jamkerja.jam_pulang OR presensi.jam_out IS NULL) THEN 1 ELSE 0 END) as hadir_count')
+                DB::raw('SUM(CASE WHEN presensi.jam_out IS NOT NULL AND presensi.jam_out < presensi_jamkerja.jam_pulang THEN 1 ELSE 0 END) as pulang_cepat_count'),
+                DB::raw('SUM(CASE WHEN presensi.jam_in > presensi_jamkerja.jam_masuk THEN 1 ELSE 0 END) as terlambat_count'),
+                DB::raw('SUM(CASE WHEN presensi.jam_in <= presensi_jamkerja.jam_masuk AND (presensi.jam_out IS NULL OR presensi.jam_out >= presensi_jamkerja.jam_pulang) THEN 1 ELSE 0 END) as hadir_count')
             )
-            ->whereMonth('tanggal', '=', $targetMonth) // Filter for target month
-            ->whereYear('tanggal', '=', $targetYear) // Filter for target year
+            ->whereMonth('tanggal', '=', $targetMonth)
+            ->whereYear('tanggal', '=', $targetYear)
+            ->where('presensi.status', '=', 'h')
             ->groupBy(DB::raw('DAY(tanggal)'))
             ->orderBy(DB::raw('DAY(tanggal)'))
             ->get();
@@ -50,10 +51,13 @@ class DailyPresenceChart
         $pulangCepatData = $mayData->pluck('pulang_cepat_count')->toArray();
 
         return $this->chart->barChart()
-            ->addData('Hadir', $hadirData)
+            ->setTitle('Rekapitulasi Presensi Harian ' . $monthName)
+            ->addData('Hadir Tepat Waktu', $hadirData)
             ->addData('Terlambat', $terlambatData)
             ->addData('Pulang Cepat', $pulangCepatData)
             ->setXAxis($days)
-            ->setStacked(true);
+            ->setStacked(true)
+            ->setColors(['#36A2EB', '#FF6384', '#FFCE56'])
+            ->setHeight(400);
     }
 }

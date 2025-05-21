@@ -129,7 +129,7 @@
                 </div>
             </div>
             <div class="d-flex justify-content-end mt-3">
-                {{ $ulang_tahun->links() }}
+                {{ $ulang_tahun->links('pagination::bootstrap-4', ['name' => 'ulang_tahun']) }}
             </div>
         </div>
     </div>
@@ -155,7 +155,7 @@
                             <tr>
                                 <th style="width: 10%">No</th>
                                 <th style="width: 60%">Nama</th>
-                                <th style="width: 15%">Total Keterlambatan</th>
+                                <th style="width: 15%">Total Terlambat</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -197,11 +197,11 @@
                 </div>
             </div>
             <div class="d-flex justify-content-end mt-3">
-                {{ $karyawan_terlambat->links() }}
+                {{ $karyawan_terlambat->links('pagination::bootstrap-4', ['name' => 'karyawan_terlambat']) }}
             </div>
         </div>
     </div>
-    <div class="col-lg-4 col-md-6 col-sm-12 d-flex align-items-stretch">
+    <!-- <div class="col-lg-4 col-md-6 col-sm-12 d-flex align-items-stretch">
         <div class="card w-100">
             <div class="card-header">
                 <h4 class="card-title">Pendidikan Karyawan</h4>
@@ -210,8 +210,39 @@
                 {!! $pddchart->container() !!}
             </div>
         </div>
+    </div> -->
+    <div class="col-lg-4 col-md-6 col-sm-12 d-flex align-items-stretch">
+        <div class="card w-100">
+            <div class="card-header">
+                <h4 class="card-title">Karyawan Tidak Absen Pulang</h4>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped">
+                        <thead class="table-dark">
+                            <tr>
+                                <th style="width: 10%">No</th>
+                                <th style="width: 70%">Nama Karyawan</th>
+                                <th style="width: 20%">Jumlah</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($karyawan_belum_pulang as $d)
+                            <tr>
+                                <td>{{ ($karyawan_belum_pulang->currentPage() - 1) * $karyawan_belum_pulang->perPage() + $loop->iteration }}</td>
+                                <td style="white-space: normal; word-wrap: break-word;">{{ $d->nama_karyawan }}</td>
+                                <td>{{ $d->jumlah_tidak_pulang }} Kali</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="d-flex justify-content-end mt-3">
+                {{ $karyawan_belum_pulang->links('pagination::bootstrap-4', ['name' => 'karyawan_belum_pulang']) }}
+            </div>
+        </div>
     </div>
-
 </div>
 <div class="row mt-3">
 <div class="col-lg-12 col-sm-12 col-xs-12">

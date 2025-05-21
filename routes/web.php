@@ -141,6 +141,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/karyawan/{nik}/lockunlocklocation', 'lockunlocklocation')->name('karyawan.lockunlocklocation')->can('karyawan.edit');
         Route::get('/karyawan/{nik}/lockunlockjamkerja', 'lockunlockjamkerja')->name('karyawan.lockunlockjamkerja')->can('karyawan.edit');
         Route::get('/karyawan/{nik}/idcard', 'idcard')->name('karyawan.idcard');
+        Route::post('/karyawan/getkaryawanbycabangdept', 'getkaryawanbycabangdept')->name('karyawan.getkaryawanbycabangdept');
     });
 
     Route::controller(DepartemenController::class)->group(function () {
@@ -150,6 +151,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/departemen/{nik}', 'edit')->name('departemen.edit')->can('departemen.edit');
         Route::put('/departemen/{nik}', 'update')->name('departemen.update')->can('departemen.edit');
         Route::delete('/departemen/{nik}/delete', 'destroy')->name('departemen.delete')->can('departemen.delete');
+        Route::post('/departemen/getdepartemenbycabang', 'getdepartemenbycabang')->name('departemen.getdepartemenbycabang');
     });
 
     Route::controller(JabatanController::class)->group(function () {
@@ -295,6 +297,7 @@ Route::middleware('auth')->group(function () {
     Route::controller(LaporanController::class)->group(function () {
         Route::get('/laporan/presensi', 'presensi')->name('laporan.presensi')->can('laporan.presensi');
         Route::post('/laporan/cetakpresensi', 'cetakpresensi')->name('laporan.cetakpresensi')->can('laporan.presensi');
+        Route::post('/laporan/cetakpresensikaryawan', 'cetakpresensikaryawan')->name('laporan.cetakpresensikaryawan')->can('laporan.presensi');
     });
 
     Route::controller(FacerecognitionController::class)->group(function () {

@@ -81,4 +81,27 @@ class DepartemenController extends Controller
             return Redirect::back()->with(messageError($e->getMessage()));
         }
     }
+
+    public function getdepartemenbycabang(Request $request)
+    {
+        $query = Departemen::query();
+        $query->select('departemen.kode_dept', 'nama_dept');
+        $query->join('karyawan', 'departemen.kode_dept', '=', 'karyawan.kode_dept');
+
+        if (!empty($request->kode_cabang)) {
+            $query->where('karyawan.kode_cabang', $request->kode_cabang);
+        }
+
+        $query->where('karyawan.status_aktif_karyawan', 1);
+        $query->groupBy('departemen.kode_dept', 'nama_dept');
+        $query->orderBy('nama_dept');
+        $departemen = $query->get();
+
+        $output = '<option value="">Semua Departemen</option>';
+        foreach ($departemen as $d) {
+            $output .= '<option value="' . $d->kode_dept . '">' . $d->nama_dept . '</option>';
+        }
+
+        return $output;
+    }
 }

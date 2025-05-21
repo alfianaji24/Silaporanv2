@@ -486,4 +486,31 @@ class KaryawanController extends Controller
         $data['generalsetting'] = $generalsetting;
         return view('datamaster.karyawan.idcard', $data);
     }
+
+    public function getkaryawanbycabangdept(Request $request)
+    {
+        $query = Karyawan::query();
+        $query->select('karyawan.nik', 'nama_karyawan', 'nama_jabatan', 'nama_dept');
+        $query->join('jabatan', 'karyawan.kode_jabatan', '=', 'jabatan.kode_jabatan');
+        $query->join('departemen', 'karyawan.kode_dept', '=', 'departemen.kode_dept');
+
+        if (!empty($request->kode_cabang)) {
+            $query->where('karyawan.kode_cabang', $request->kode_cabang);
+        }
+
+        if (!empty($request->kode_dept)) {
+            $query->where('karyawan.kode_dept', $request->kode_dept);
+        }
+
+        $query->where('karyawan.status_aktif_karyawan', 1);
+        $query->orderBy('nama_karyawan');
+        $karyawan = $query->get();
+
+        $output = '<option value="">Pilih Karyawan</option>';
+        foreach ($karyawan as $d) {
+            $output .= '<option value="' . $d->nik . '">' . $d->nik . ' - ' . $d->nama_karyawan . ' (' . $d->nama_jabatan . ' - ' . $d->nama_dept . ')</option>';
+        }
+
+        return $output;
+    }
 }

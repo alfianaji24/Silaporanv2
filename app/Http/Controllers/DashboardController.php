@@ -89,7 +89,7 @@ class DashboardController extends Controller
             ->where('status_aktif_karyawan', 1)
             ->whereRaw('DATE_FORMAT(tanggal_lahir, "%m-%d") >= DATE_FORMAT(CURDATE(), "%m-%d")')
             ->orderByRaw('DATE_FORMAT(tanggal_lahir, "%m-%d")')
-            ->paginate(5);
+            ->paginate(5, ['*'], 'ulang_tahun_page');
 
             // Get today's attendance statistics
             $data['presensi_hari_ini'] = Presensi::join('presensi_jamkerja', 'presensi.kode_jam_kerja', '=', 'presensi_jamkerja.kode_jam_kerja')
@@ -114,7 +114,7 @@ class DashboardController extends Controller
                 )
                 ->groupBy('karyawan.nik', 'karyawan.nama_karyawan')
                 ->orderBy(DB::raw('SUM(TIME_TO_SEC(presensi.jam_in) - TIME_TO_SEC(presensi_jamkerja.jam_masuk))'), 'desc')
-                ->paginate(7);
+                ->paginate(7, ['*'], 'terlambat_page');
 
             // Get list of employees who are on time today
             $data['karyawan_tepat_waktu'] = Presensi::join('presensi_jamkerja', 'presensi.kode_jam_kerja', '=', 'presensi_jamkerja.kode_jam_kerja')
@@ -135,6 +135,22 @@ class DashboardController extends Controller
                 )
                 ->orderBy('karyawan.nama_karyawan')
                 ->get();
+
+            // Get list of employees who haven't checked out today
+            $data['karyawan_belum_pulang'] = Presensi::join('karyawan', 'presensi.nik', '=', 'karyawan.nik')
+                ->whereBetween('presensi.tanggal', [Carbon::now()->subMonth()->startOfMonth(), Carbon::now()->endOfMonth()])
+                ->whereNull('presensi.jam_out')
+                ->where('karyawan.status_aktif_karyawan', 1)
+                ->select(
+                    'karyawan.nama_karyawan',
+                    DB::raw('COUNT(*) as jumlah_tidak_pulang'),
+                    DB::raw('MAX(presensi.tanggal) as tanggal_terakhir'),
+                    DB::raw('MIN(presensi.tanggal) as tanggal_pertama')
+                )
+                ->groupBy('karyawan.nik', 'karyawan.nama_karyawan')
+                ->having('jumlah_tidak_pulang', '>', 0)
+                ->orderBy('jumlah_tidak_pulang', 'desc')
+                ->paginate(7, ['*'], 'belum_pulang_page');
 
             return view('dashboard.dashboard', $data);
         }
