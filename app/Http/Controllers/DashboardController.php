@@ -13,6 +13,7 @@ use App\Models\Userkaryawan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Jenssegers\Agent\Agent;
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
@@ -21,6 +22,8 @@ class DashboardController extends Controller
         $agent = new Agent();
         $user = User::where('id', auth()->user()->id)->first();
         $hari_ini = date("Y-m-d");
+        $monthName = Carbon::now()->translatedFormat('F');
+
         if ($user->hasRole('karyawan')) {
             $userkaryawan = Userkaryawan::where('id_user', auth()->user()->id)->first();
             $data['karyawan'] = Karyawan::where('nik', $userkaryawan->nik)
@@ -73,6 +76,7 @@ class DashboardController extends Controller
             $data['jkchart'] = $jkchart->build();
             $data['pddchart'] = $pddchart->build();
             $data['dpchart'] = $dpchart->build();
+            $data['monthName'] = $monthName;
 
             // Get ulang tahun karyawan - 10 terdekat
             $data['ulang_tahun'] = Karyawan::select([
@@ -97,6 +101,20 @@ class DashboardController extends Controller
                     DB::raw("(SELECT COUNT(*) FROM karyawan WHERE status_aktif_karyawan = 1) - COUNT(presensi.id) as tidak_absen")
                 )
                 ->first();
+
+            // Get list of employees who are late
+            $data['karyawan_terlambat'] = Presensi::join('presensi_jamkerja', 'presensi.kode_jam_kerja', '=', 'presensi_jamkerja.kode_jam_kerja')
+                ->join('karyawan', 'presensi.nik', '=', 'karyawan.nik')
+                ->where('presensi.jam_in', '>', DB::raw('presensi_jamkerja.jam_masuk'))
+                ->where('karyawan.status_aktif_karyawan', 1)
+                ->select(
+                    'karyawan.nama_karyawan',
+                    DB::raw('COUNT(*) as jumlah_terlambat'),
+                    DB::raw('SEC_TO_TIME(SUM(TIME_TO_SEC(presensi.jam_in) - TIME_TO_SEC(presensi_jamkerja.jam_masuk))) as total_keterlambatan')
+                )
+                ->groupBy('karyawan.nik', 'karyawan.nama_karyawan')
+                ->orderBy('jumlah_terlambat', 'desc')
+                ->paginate(7);
 
             // Get list of employees who are on time today
             $data['karyawan_tepat_waktu'] = Presensi::join('presensi_jamkerja', 'presensi.kode_jam_kerja', '=', 'presensi_jamkerja.kode_jam_kerja')

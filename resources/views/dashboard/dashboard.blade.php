@@ -4,7 +4,7 @@
 @section('navigasi')
     <span>Dashboard</span> | <span id="datetime"></span>
 @endsection
-<div class="row">
+<!-- <div class="row">
     <div class="col-lg-12 col-sm-12 col-xs-12">
         <div class="card mb-6">
             <div class="card-widget-separator-wrapper">
@@ -51,7 +51,7 @@
             </div>
         </div>
     </div>
-</div>
+</div> -->
 <div class="row mt-3">
     <div class="col-lg-12 col-sm-12 col-xs-12">
         <div class="card mb-6">
@@ -133,13 +133,71 @@
             </div>
         </div>
     </div>
-    <div class="col-lg-4 col-md-6 col-sm-12 d-flex align-items-stretch">
+    <!-- <div class="col-lg-4 col-md-6 col-sm-12 d-flex align-items-stretch">
         <div class="card w-100">
             <div class="card-header">
                 <h4 class="card-title">Jenis Kelamin</h4>
             </div>
             <div class="card-body">
                 {!! $jkchart->container() !!}
+            </div>
+        </div>
+    </div> -->
+    <div class="col-lg-4 col-md-6 col-sm-12 d-flex align-items-stretch">
+        <div class="card w-100">
+            <div class="card-header">
+                <h4 class="card-title">Daftar Karyawan Terlambat</h4>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped">
+                        <thead class="table-dark">
+                            <tr>
+                                <th style="width: 10%">No</th>
+                                <th style="width: 60%">Nama</th>
+                                <th style="width: 15%">Total Keterlambatan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($karyawan_terlambat as $d)
+                            <tr>
+                                <td>{{ ($karyawan_terlambat->currentPage() - 1) * $karyawan_terlambat->perPage() + $loop->iteration }}</td>
+                                <td style="white-space: normal; word-wrap: break-word;">{{ $d->nama_karyawan }}</td>
+                                <td>
+                                    @php
+                                        if ($d->total_keterlambatan) {
+                                            $time = explode(':', $d->total_keterlambatan);
+                                            $hours = isset($time[0]) ? (int)$time[0] : 0;
+                                            $minutes = isset($time[1]) ? (int)$time[1] : 0;
+                                            $seconds = isset($time[2]) ? (int)$time[2] : 0;
+
+                                            $timeString = '';
+
+                                            if ($hours > 0) {
+                                                $timeString .= $hours . ' Jam';
+                                                if ($minutes > 0) {
+                                                    $timeString .= ' ';
+                                                }
+                                            }
+
+                                            if ($minutes > 0) {
+                                                $timeString .= $minutes . ' Menit';
+                                            }
+
+                                            echo trim($timeString) ?: '0 Menit';
+                                        } else {
+                                            echo '0 Menit';
+                                        }
+                                    @endphp
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="d-flex justify-content-end mt-3">
+                {{ $karyawan_terlambat->links() }}
             </div>
         </div>
     </div>
