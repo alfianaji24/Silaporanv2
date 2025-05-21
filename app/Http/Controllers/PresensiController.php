@@ -436,16 +436,49 @@ class PresensiController extends Controller
     public function getdatamesin(Request $request)
     {
         $tanggal = $request->tanggal;
-        $nextday = date('Y-m-d', strtotime($tanggal . ' +1 day')); // Get next day
         $pin = $request->pin;
         $general_setting = Pengaturanumum::where('id', 1)->first();
         $specific_value = $pin;
 
+        // Cari karyawan berdasarkan PIN
+        $karyawan = Karyawan::where('pin', $pin)->first();
+
+        if ($karyawan == null) {
+            // Handle jika karyawan tidak ditemukan, bisa return response error atau view kosong
+             $filtered_array = [];
+             $general_error = 'Karyawan dengan PIN tersebut tidak ditemukan.';
+             return view('presensi.getdatamesin', compact('filtered_array', 'general_error'));
+        }
+
+        // Tentukan jam kerja karyawan pada tanggal yang diminta
+        $namahari = getnamaHari(date('D', strtotime($tanggal)));
+        $jamkerja = Setjamkerjabydate::join('presensi_jamkerja', 'presensi_jamkerja_bydate.kode_jam_kerja', '=', 'presensi_jamkerja.kode_jam_kerja')
+            ->where('nik', $karyawan->nik)
+            ->where('tanggal', $tanggal)
+            ->first();
+
+        // Jika tidak ada jam kerja spesifik by date, cek jam kerja by day
+        if ($jamkerja == null) {
+            $jamkerja = Setjamkerjabyday::join('presensi_jamkerja', 'presensi_jamkerja_byday.kode_jam_kerja', '=', 'presensi_jamkerja.kode_jam_kerja')
+                ->where('nik', $karyawan->nik)->where('hari', $namahari)->first();
+
+            // Jika jam kerja harian kosong, gunakan jam kerja default (JK01)
+            if ($jamkerja == null) {
+                $jamkerja = Jamkerja::where('kode_jam_kerja', 'JK01')->first();
+            }
+        }
+
+        // Tentukan tanggal akhir pengambilan data berdasarkan status lintashari
+        $end_date = $tanggal;
+        if ($jamkerja && $jamkerja->lintashari == 1) {
+            $end_date = date('Y-m-d', strtotime($tanggal . ' +1 day')); // Ambil data sampai hari berikutnya jika lintas hari
+        }
+
         //Mesin 1
         $url = 'https://developer.fingerspot.io/api/get_attlog';
 
-        // Get data for both current date and next day
-        $data = '{"trans_id":"1", "cloud_id":"' . $general_setting->cloud_id . '", "start_date":"' . $tanggal . '", "end_date":"' . $nextday . '"}';
+        // Get data based on determined start and end dates
+        $data = '{"trans_id":"1", "cloud_id":"' . $general_setting->cloud_id . '", "start_date":"' . $tanggal . '", "end_date":"' . $end_date . '"}';
         $authorization = "Authorization: Bearer " . $general_setting->api_key;
 
         $ch = curl_init($url);

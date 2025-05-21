@@ -158,8 +158,12 @@
                                                             {{ date('H:i', strtotime($d->jam_out)) }}
                                                         </a>
                                                         <span class="text-danger">
-                                                            @if ($pulangcepat > 0)
-                                                                (-{{ $pulangcepat }})
+                                                            @php
+                                                                // Ensure $pulangcepat is numeric before comparing and displaying
+                                                                $pulangcepat_display = is_numeric($pulangcepat) ? $pulangcepat : 0;
+                                                            @endphp
+                                                            @if ($pulangcepat_display > 0)
+                                                                (-{{ $pulangcepat_display }})
                                                             @endif
                                                         </span>
                                                     @else
@@ -190,7 +194,10 @@
                                             </td>
                                             <td class="text-center">
                                                 @php
-                                                    $total_potongan_jam = $pulangcepat + $potongan_jam_terlambat;
+                                                    // Ensure $pulangcepat and $potongan_jam_terlambat are numeric before summing
+                                                    $pulangcepat_numeric = is_numeric($pulangcepat) ? $pulangcepat : 0;
+                                                    $potongan_jam_terlambat_numeric = is_numeric($potongan_jam_terlambat) ? $potongan_jam_terlambat : 0;
+                                                    $total_potongan_jam = $pulangcepat_numeric + $potongan_jam_terlambat_numeric;
                                                 @endphp
                                                 @if ($total_potongan_jam > 0)
                                                     <span class="badge bg-danger">
