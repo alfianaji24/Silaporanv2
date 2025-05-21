@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Charts\JeniskelaminkaryawanChart;
 use App\Charts\PendidikankaryawanChart;
 use App\Charts\StatusKaryawanChart;
+use App\Charts\DailyPresenceChart;
 use App\Models\Karyawan;
 use App\Models\Presensi;
 use App\Models\User;
@@ -15,7 +16,7 @@ use Jenssegers\Agent\Agent;
 
 class DashboardController extends Controller
 {
-    public function index(StatusKaryawanChart $chart, JeniskelaminkaryawanChart $jkchart, PendidikankaryawanChart $pddchart)
+    public function index(StatusKaryawanChart $chart, JeniskelaminkaryawanChart $jkchart, PendidikankaryawanChart $pddchart, DailyPresenceChart $dpchart)
     {
         $agent = new Agent();
         $user = User::where('id', auth()->user()->id)->first();
@@ -71,6 +72,7 @@ class DashboardController extends Controller
             $data['chart'] = $chart->build();
             $data['jkchart'] = $jkchart->build();
             $data['pddchart'] = $pddchart->build();
+            $data['dpchart'] = $dpchart->build();
 
             // Get ulang tahun karyawan - 10 terdekat
             $data['ulang_tahun'] = Karyawan::select([

@@ -153,13 +153,26 @@
             </div>
         </div>
     </div>
-</div>
 
+</div>
+<div class="row mt-3">
+<div class="col-lg-12 col-sm-12 col-xs-12">
+        <div class="card w-100">
+            <div class="card-header">
+                <h4 class="card-title">Rekapitulasi Presensi Harian Bulan Mei</h4>
+            </div>
+            <div class="card-body">
+                {!! $dpchart->container() !!}
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 @push('myscript')
 <script src="{{ $chart->cdn() }}"></script>
 {{ $jkchart->script() }}
 {{ $pddchart->script() }}
+{{ $dpchart->script() }}
 <script>
     function updateDateTime() {
         const now = new Date();
