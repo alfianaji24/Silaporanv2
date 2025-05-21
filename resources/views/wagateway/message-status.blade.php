@@ -207,6 +207,22 @@
                     d.date = filters.date;
                     d.nik = filters.nik;
                     d.phone = filters.phone;
+                },
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                error: function(xhr, error, thrown) {
+                    if (xhr.status === 401) {
+                        toastr.error('Sesi Anda telah berakhir. Silakan login kembali.');
+                        setTimeout(() => {
+                            window.location.href = '{{ route("login") }}';
+                        }, 2000);
+                    } else if (xhr.status === 403) {
+                        toastr.error('Anda tidak memiliki akses ke halaman ini.');
+                    } else {
+                        toastr.error('Terjadi kesalahan saat memuat data. Silakan coba lagi.');
+                    }
+                    console.error('DataTables error:', error, thrown);
                 }
             },
             columns: [
