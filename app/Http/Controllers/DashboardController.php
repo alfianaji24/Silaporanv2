@@ -113,7 +113,7 @@ class DashboardController extends Controller
                     DB::raw('SEC_TO_TIME(SUM(TIME_TO_SEC(presensi.jam_in) - TIME_TO_SEC(presensi_jamkerja.jam_masuk))) as total_keterlambatan')
                 )
                 ->groupBy('karyawan.nik', 'karyawan.nama_karyawan')
-                ->orderBy('jumlah_terlambat', 'desc')
+                ->orderBy(DB::raw('SUM(TIME_TO_SEC(presensi.jam_in) - TIME_TO_SEC(presensi_jamkerja.jam_masuk))'), 'desc')
                 ->paginate(7);
 
             // Get list of employees who are on time today
