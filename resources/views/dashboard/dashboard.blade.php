@@ -111,16 +111,16 @@
                     <table class="table table-bordered table-striped">
                         <thead class="table-dark">
                             <tr>
-                                <th style="width: 40%">Nama Karyawan</th>
-                                <th>Tgl Lahir</th>
-                                <th>Umur</th>
+                                <th style="width: 50%">Nama Karyawan</th>
+                                <th style="width: 30%">Tgl Lahir</th>
+                                <th style="width: 20%">Umur</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($ulang_tahun as $d)
                             <tr>
-                                <td style="white-space: normal; word-wrap: break-word;">{{ $d->nama_karyawan }}</td>
-                                <td>{{ date('d-M-Y', strtotime($d->tanggal_lahir)) }}</td>
+                                <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $d->nama_karyawan }}</td>
+                                <td style="font-size: 0.9em;">{{ date('d-M-Y', strtotime($d->tanggal_lahir)) }}</td>
                                 <td>{{ $d->umur }} Thn</td>
                             </tr>
                             @endforeach

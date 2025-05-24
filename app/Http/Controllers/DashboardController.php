@@ -89,7 +89,7 @@ class DashboardController extends Controller
             ->where('status_aktif_karyawan', 1)
             ->whereRaw('DATE_FORMAT(tanggal_lahir, "%m-%d") >= DATE_FORMAT(CURDATE(), "%m-%d")')
             ->orderByRaw('DATE_FORMAT(tanggal_lahir, "%m-%d")')
-            ->paginate(5, ['*'], 'ulang_tahun_page');
+            ->paginate(8, ['*'], 'ulang_tahun_page');
 
             // Get today's attendance statistics
             $data['presensi_hari_ini'] = Presensi::join('presensi_jamkerja', 'presensi.kode_jam_kerja', '=', 'presensi_jamkerja.kode_jam_kerja')
@@ -114,7 +114,7 @@ class DashboardController extends Controller
                 )
                 ->groupBy('karyawan.nik', 'karyawan.nama_karyawan')
                 ->orderBy(DB::raw('SUM(TIME_TO_SEC(presensi.jam_in) - TIME_TO_SEC(presensi_jamkerja.jam_masuk))'), 'desc')
-                ->paginate(7, ['*'], 'terlambat_page');
+                ->paginate(8, ['*'], 'terlambat_page');
 
             // Get list of employees who are on time today
             $data['karyawan_tepat_waktu'] = Presensi::join('presensi_jamkerja', 'presensi.kode_jam_kerja', '=', 'presensi_jamkerja.kode_jam_kerja')
