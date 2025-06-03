@@ -138,7 +138,7 @@ class DashboardController extends Controller
 
             // Get list of employees who haven't checked out today
             $data['karyawan_belum_pulang'] = Presensi::join('karyawan', 'presensi.nik', '=', 'karyawan.nik')
-                ->whereBetween('presensi.tanggal', [Carbon::now()->subMonth()->startOfMonth(), Carbon::now()->endOfMonth()])
+                ->whereBetween('presensi.tanggal', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])
                 ->whereNull('presensi.jam_out')
                 ->where('karyawan.status_aktif_karyawan', 1)
                 ->select(

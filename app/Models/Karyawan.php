@@ -18,9 +18,9 @@ class Karyawan extends Model
     {
         $query = Karyawan::query();
         $query->select(
-            DB::raw("SUM(IF(status_karyawan = 'K', 1, 0)) as jml_kontrak"),
-            DB::raw("SUM(IF(status_karyawan = 'T', 1, 0)) as jml_tetap"),
-            DB::raw("SUM(IF(status_karyawan = 'O', 1, 0)) as jml_outsourcing"),
+            DB::raw("SUM(IF(status_karyawan = 'K' AND status_aktif_karyawan = '1', 1, 0)) as jml_kontrak"),
+            DB::raw("SUM(IF(status_karyawan = 'T' AND status_aktif_karyawan = '1', 1, 0)) as jml_tetap"),
+            DB::raw("SUM(IF(status_karyawan = 'O' AND status_aktif_karyawan = '1', 1, 0)) as jml_outsourcing"),
             DB::raw("SUM(IF(status_aktif_karyawan = '1', 1, 0)) as jml_aktif"),
         );
         return $query->first();

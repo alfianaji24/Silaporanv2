@@ -1,7 +1,6 @@
 @extends('layouts.app')
 @section('titlepage', 'WhatsApp QR Scanner')
 @section('navigasi')
-    <span>WhatsApp QR Scanner</span>
 @endsection
 @section('content')
 
@@ -416,10 +415,11 @@
                 whatsappStatusText.textContent = 'WhatsApp Terhubung';
                 whatsappStatusTime.textContent = 'Terhubung pada: ' + new Date().toLocaleTimeString();
 
-                // Update main status message
+                // Update main status message and add dashboard button
                 statusMessage.innerHTML =
-                    '<span class="success-text"><i class="ti ti-check me-2"></i>WhatsApp berhasil terhubung!</span>';
-                statusMessage.className = 'success-text';
+                    '<span class="success-text"><i class="ti ti-check me-2"></i>WhatsApp berhasil terhubung!</span>' +
+                    '<div class="button-container mt-3"><a href="' + baseUrl + '/dashboard" class="btn btn-primary">Go to Dashboard</a></div>';
+                statusMessage.className = 'success-message-container'; // Use a new class for better styling
 
                 // Show success icon and hide QR code
                 document.querySelector('.qrcode').classList.add('hidden');

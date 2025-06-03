@@ -87,7 +87,6 @@ foreach ($days as $day) {
 }
 
         return $this->chart->barChart()
-            ->setTitle('Rekapitulasi Presensi Harian ' . $monthName)
             ->addData('Hadir Tepat Waktu', array_values($hadirData))
             ->addData('Terlambat', array_values($terlambatData))
             ->addData('Pulang Cepat', array_values($pulangCepatData))

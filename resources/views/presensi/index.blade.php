@@ -46,16 +46,17 @@
                                         <th>Nama Karyawan</th>
                                         <!-- <th>Dept</th>
                                         <th>Cbg</th> -->
-                                        <th>Jam Kerja</th>
+                                        <th class="text-center">Jam Kerja</th>
                                         <th class="text-center">Jam Masuk</th>
                                         <th class="text-center">Jam Pulang</th>
                                         <th class="text-center">Status</th>
                                         {{-- <th class="text-center">Keluar</th> --}}
                                         <th class="text-center">Terlambat</th>
+                                        <th class="text-center">Pulang Cepat</th>
                                         <th>Denda</th>
                                         <th>POT. JAM</th>
                                         {{-- <th class="text-center">Total</th> --}}
-                                        <th class="text-center">#</th>
+                                        <th class="text-center">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -102,7 +103,9 @@
                                                     {{ $d->nama_jam_kerja }} {{ date('H:i', strtotime($d->jam_masuk)) }} -
                                                     {{ date('H:i', strtotime($d->jam_pulang)) }}
                                                 @else
-                                                    <i class="ti ti-hourglass-low text-warning"></i>
+                                                    <div class="text-center">
+                                                        <i class="ti ti-hourglass-low text-warning"></i>
+                                                    </div>
                                                 @endif
                                             </td>
                                             <td class="text-center">
@@ -185,11 +188,16 @@
                                                 @endif
                                             </td>
                                             <td class="text-center">
-
                                                 {!! $terlambat != null ? $terlambat['show'] : '<i class="ti ti-hourglass-low text-warning"></i>' !!}
                                             </td>
+                                            <td class="text-center">
+                                                @if ($d->jam_out != null && $pulangcepat > 0)
+                                                    <span class="text-danger">{{ formatAngkaDesimal($pulangcepat) }}</span>
+                                                @else
+                                                    <i class="ti ti-hourglass-low text-warning"></i>
+                                                @endif
+                                            </td>
                                             <td class="text-end">
-
                                                 {{ formatAngka($denda) }}
                                             </td>
                                             <td class="text-center">
@@ -204,7 +212,6 @@
                                                         {{ formatAngkaDesimal($total_potongan_jam) }}
                                                     </span>
                                                 @endif
-
                                             </td>
                                             <td>
                                                 <div class="d-flex">
@@ -219,7 +226,6 @@
                                             </td>
                                         </tr>
                                     @endforeach
-
                                 </tbody>
                             </table>
                         </div>
@@ -256,9 +262,6 @@
                 }
             });
         });
-
-
-
 
         $(".btnShowpresensi_in, .btnShowpresensi_out").click(function(e) {
             e.preventDefault();
