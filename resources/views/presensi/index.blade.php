@@ -163,7 +163,7 @@
                                                         <span class="text-danger">
                                                             @php
                                                                 // Ensure $pulangcepat is numeric before comparing and displaying
-                                                                $pulangcepat_display = is_numeric($pulangcepat) ? $pulangcepat : 0;
+                                                                $pulangcepat_display = is_numeric($pulangcepat['potongan_jam']) ? $pulangcepat['potongan_jam'] : 0;
                                                             @endphp
                                                             @if ($pulangcepat_display > 0)
                                                                 (-{{ $pulangcepat_display }})
@@ -191,8 +191,8 @@
                                                 {!! $terlambat != null ? $terlambat['show'] : '<i class="ti ti-hourglass-low text-warning"></i>' !!}
                                             </td>
                                             <td class="text-center">
-                                                @if ($d->jam_out != null && $pulangcepat > 0)
-                                                    <span class="text-danger">{{ formatAngkaDesimal($pulangcepat) }}</span>
+                                                @if ($d->jam_out != null && isset($pulangcepat['potongan_jam']) && $pulangcepat['potongan_jam'] > 0)
+                                                    <span class="text-danger">{{ formatAngkaDesimal($pulangcepat['potongan_jam']) }}</span>
                                                 @else
                                                     <i class="ti ti-hourglass-low text-warning"></i>
                                                 @endif
@@ -203,7 +203,7 @@
                                             <td class="text-center">
                                                 @php
                                                     // Ensure $pulangcepat and $potongan_jam_terlambat are numeric before summing
-                                                    $pulangcepat_numeric = is_numeric($pulangcepat) ? $pulangcepat : 0;
+                                                    $pulangcepat_numeric = isset($pulangcepat['potongan_jam']) ? $pulangcepat['potongan_jam'] : 0;
                                                     $potongan_jam_terlambat_numeric = is_numeric($potongan_jam_terlambat) ? $potongan_jam_terlambat : 0;
                                                     $total_potongan_jam = $pulangcepat_numeric + $potongan_jam_terlambat_numeric;
                                                 @endphp
