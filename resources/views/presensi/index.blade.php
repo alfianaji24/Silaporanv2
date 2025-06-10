@@ -191,12 +191,8 @@
                                                 {!! $terlambat != null ? $terlambat['show'] : '<i class="ti ti-hourglass-low text-warning"></i>' !!}
                                             </td>
                                             <td class="text-center">
-                                                @if ($d->jam_out != null)
-                                                    @if (isset($pulangcepat['potongan_jam']) && $pulangcepat['potongan_jam'] > 0)
-                                                        {!! $pulangcepat['show_laporan'] != '-' ? '<span class="badge bg-danger">' . $pulangcepat['show_laporan'] . '</span>' : '<i class="ti ti-hourglass-low text-warning"></i>' !!}
-                                                    @else
-                                                        <i class="ti ti-hourglass-low text-warning"></i>
-                                                    @endif
+                                                @if ($d->jam_out != null && isset($pulangcepat['potongan_jam']) && $pulangcepat['potongan_jam'] > 0)
+                                                    <span class="text-danger">{{ formatAngkaDesimal($pulangcepat['potongan_jam']) }}</span>
                                                 @else
                                                     <i class="ti ti-hourglass-low text-warning"></i>
                                                 @endif
