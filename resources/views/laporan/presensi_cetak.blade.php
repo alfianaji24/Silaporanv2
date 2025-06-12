@@ -171,12 +171,19 @@
                                             $d[$tanggal_presensi]['lintashari'],
                                         );
 
-                                        $ket_pulang_cepat =
-                                            $pulangcepat != null ? '<span style="color:red">PC : ' . $pulangcepat . ' Jam </span>' : '';
-                                        $color_pulang_cepat = $pulangcepat != null ? 'red' : '';
+                                        $pulangcepat_numeric = 0;
+                                        if (is_array($pulangcepat) && isset($pulangcepat['desimal_pulangcepat'])) {
+                                            $pulangcepat_numeric = $pulangcepat['desimal_pulangcepat'];
+                                        } else if (is_numeric($pulangcepat)) {
+                                            $pulangcepat_numeric = $pulangcepat;
+                                        }
 
-                                        $potongan_jam = $pulangcepat + $potongan_jam_terlambat;
-                                        $ket_potongan_jam = !empty($total_potongan_jam)
+                                        $ket_pulang_cepat =
+                                            $pulangcepat_numeric != 0 ? '<span style="color:red">PC : ' . $pulangcepat_numeric . ' Jam </span>' : '';
+                                        $color_pulang_cepat = $pulangcepat_numeric != 0 ? 'red' : '';
+
+                                        $potongan_jam = $pulangcepat_numeric + $potongan_jam_terlambat;
+                                        $ket_potongan_jam = !empty($potongan_jam)
                                             ? '<span style="color:red">PJ: ' . formatAngkaDesimal($potongan_jam) . '</span>'
                                             : '';
                                         $ket =
